@@ -145,6 +145,12 @@ const basePowerupCooldown = 10000;
 let powerupCooldown = 10000;
 let lastPowerupTime = 0;
 
+let collectedPowerups = {
+  changes: false,
+  bullet_damage: 0,
+  rocket_piercing: 0,
+}
+
 // level
 let currentLevel = 1;
 let currentExperience = 0;
@@ -411,15 +417,16 @@ const initInput = () => {
 };
 
 const updateStats = () => {
-  if (!modifiers.changes) {
+  if (!modifiers.changes && !collectedPowerups.changes) {
     return;
   }
+  collectedPowerups.changes = false;
   modifiers.changes = false;
 
-  bulletDamage = (baseBulletDamage * modifiers.bullet_damage_m + modifiers.bullet_damage_a) * (modifiers.bullet_compression);
+  bulletDamage = ((baseBulletDamage + collectedPowerups.bullet_damage) * modifiers.bullet_damage_m + modifiers.bullet_damage_a) * (modifiers.bullet_compression);
   bulletCooldown = (baseBulletCooldown * (1 / modifiers.bullet_attack_speed_m) - modifiers.bullet_attack_speed_a) * (modifiers.bullet_compression * 0.95);
 
-  rocketPiercing = Math.round(baseRocketPiercing * modifiers.rocket_piercing_m + modifiers.rocket_piercing_a);
+  rocketPiercing = Math.round((baseRocketPiercing + collectedPowerups.rocket_piercing) * modifiers.rocket_piercing_m + modifiers.rocket_piercing_a);
   rocketCooldown = baseRocketCooldown * (1 / modifiers.rocket_attack_speed_m) - modifiers.rocket_attack_speed_a; 
 
   powerupCooldown = basePowerupCooldown * (1 / modifiers.powerup_cooldown_m) - modifiers.powerup_cooldown_a;
@@ -868,11 +875,13 @@ const update = (deltaTime) => {
           ui.updateHp(spaceship.hp);
           break;
         case "damage":
-          bulletDamage += 1;
+          collectedPowerups.bullet_damage++;
+          collectedPowerups.changes = true;
           ui.updateBulletDamage(bulletDamage);
           break;
         case "rocket-piercing":
-          rocketPiercing += 1;
+          collectedPowerups.rocket_piercing++;
+          collectedPowerups.changes = true;
           ui.updateRocketPiercing(rocketPiercing);
           break;
       }
