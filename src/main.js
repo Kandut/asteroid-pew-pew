@@ -43,7 +43,8 @@ import spaceshipUrl from "/img/Spaceship.png?url";
 import wingLeftUrl from "/img/WingLeft.png?url";
 import wingRightUrl from "/img/WingRight.png?url";
 import * as ui from "./util/ui.js";
-import * as shop from "./util/shop.js";
+import * as shop from "./util/rogue/shop.js";
+import {modifiers, handleLevelUp} from "./util/rogue/rogue.js";
 
 import { createFragementTexture, prepareVornoi } from "./features/VoronoiFracture.js";
 
@@ -66,6 +67,7 @@ const calculateAsteroidMass = (radius, type) => {
 // game state
 let paused = true;
 const resume = () => (paused = false);
+const pause = () => (paused = true);
 let frameHandle;
 
 // fps / ups settings
@@ -98,16 +100,20 @@ let spaceship = null;
 let powerups = [];
 
 // shooting
+const baseBulletDamage = 1;
 let bulletDamage = 1;
 let bulletIndex = 0;
 let shootingBullets = false;
 let lastBulletTime = 0;
+const baseBulletCooldown = 40;
 let bulletCooldown = 40; // in ms
 let enemyBulletCooldown = 80; // in ms
 
 // rockets
+const baseRocketPiercing = 3;
 let rocketPiercing = 3;
 let shootingRockets = false;
+const baseRocketCooldown = 3000;
 let rocketCooldown = 3000; // in ms
 let lastRocketTime = 0;
 let rocketVelocity = 300;
@@ -135,6 +141,7 @@ const setHitlessModeEnabled = (enabled) => {
 };
 
 // powerups
+const basePowerupCooldown = 10000;
 let powerupCooldown = 10000;
 let lastPowerupTime = 0;
 
@@ -154,6 +161,31 @@ let movement = {
   leftController: false,
   rightController: false,
 };
+
+let currentMenue = "none"; // types: "pause" "shop"
+const toggleMenue = (menueType) => {
+  if (currentMenue != menueType) {
+    pause();
+    setPropulsionVolume(0);
+    switch (menueType) {
+      case "pause":
+        shop.hideShop();
+        ui.showPauseMenu();
+        break;
+
+      case "shop":
+        ui.hidePauseMenu();
+        shop.showShop();
+        break;
+    }
+    currentMenue = menueType;
+  } else {
+    ui.hidePauseMenu();
+    shop.hideShop();
+    resume();
+    currentMenue = "none";
+  }
+}
 
 let drawCollisions = false;
 const setDrawCollisions = (enabled) => {
@@ -221,7 +253,7 @@ const controllerInput = (now) => {
   */
 
   if (gamepad.buttons[9].value >= 0.5 && now - 300 >= lastMenueToggle) {
-    togglePause();
+    toggleMenue("pause");
     lastMenueToggle = now;
   }
   if (gamepad.buttons[7].pressed && gamepad.buttons[7].value >= 0.5) {
@@ -230,8 +262,7 @@ const controllerInput = (now) => {
     shootingBullets = false;
   }
   if (gamepad.buttons[8].pressed && gamepad.buttons[8].value >= 0.5 && now - 300 >= lastShopToggle) {
-    paused = !paused;
-    shop.toggleShop();
+    toggleMenue("shop");
     lastShopToggle = now;
   }
   if (gamepad.buttons[6].pressed && gamepad.buttons[6].value >= 0.5) {
@@ -294,12 +325,11 @@ const initInput = () => {
   document.addEventListener("keydown", (event) => {
     switch (event.key) {
       case "Escape":
-        togglePause();
+        toggleMenue("pause");
         break;
       case "e":
       case "E":
-        paused = !paused;
-        shop.toggleShop();
+        toggleMenue("shop");
         break;
       case " ":
         shootingBullets = !paused && weaponsEnabled;
@@ -379,6 +409,25 @@ const initInput = () => {
     }
   });
 };
+
+const updateStats = () => {
+  if (!modifiers.changes) {
+    return;
+  }
+  modifiers.changes = false;
+
+  bulletDamage = (baseBulletDamage * modifiers.bullet_damage_m + modifiers.bullet_damage_a) * (modifiers.bullet_compression);
+  bulletCooldown = (baseBulletCooldown * (1 / modifiers.bullet_attack_speed_m) - modifiers.bullet_attack_speed_a) * (modifiers.bullet_compression * 0.95);
+
+  rocketPiercing = Math.round(baseRocketPiercing * modifiers.rocket_piercing_m + modifiers.rocket_piercing_a);
+  rocketCooldown = baseRocketCooldown * (1 / modifiers.rocket_attack_speed_m) - modifiers.rocket_attack_speed_a; 
+
+  powerupCooldown = basePowerupCooldown * (1 / modifiers.powerup_cooldown_m) - modifiers.powerup_cooldown_a;
+
+  ui.updateBulletDamage(bulletDamage);
+  ui.updateFireRate(bulletCooldown);
+  ui.updateRocketPiercing(rocketPiercing);
+}
 
 let now = performance.now();
 
@@ -618,19 +667,26 @@ const handleDamageTaken = () => {
 };
 
 const handleExperienceGain = (experience) => {
-  currentExperience += experience;
+  currentExperience += experience * modifiers.experience_gain_m + modifiers.experience_gain_a;
   
   if (currentExperience >= experienceNeeded) {
     currentLevel += 1;
     currentExperience -= experienceNeeded;
 
     experienceNeeded += experienceScaling;
+
+    pause();
+    handleLevelUp(() => {
+      updateStats();
+      resume();
+    });
   }
 
   ui.updateLevel(currentExperience, experienceNeeded, currentLevel);
 }
 
 const update = (deltaTime) => {
+  updateStats();
   processEvents();
 
   gameState.timePlayed += deltaTime;
@@ -663,6 +719,7 @@ const update = (deltaTime) => {
     velocityVerlet(asteroid, deltaTime);
     if (outOfBounds(asteroid.position)) {
       asteroid.remove = true;
+      shop.handleGetCoins(1);
     }
 
     for (let j = i + 1; j < asteroids.length; j++) {
@@ -960,7 +1017,7 @@ const addAsteroid = (
     asteroid.lastBulletTime = now;
     asteroid.bulletIndex = 0;
   } else if (type === "golden") {
-    asteroid.hp = 200;
+    asteroid.hp = asteroid.hp * 10;
   }
 
   // do not spawn asteroids inside each other
@@ -984,7 +1041,7 @@ const addBullet = (position, rotation, velocity, angularVelocity, friendly) => {
   bullet.rotation = rotation;
   bullet.velocity = velocity;
   bullet.angularVelocity = angularVelocity;
-  bullet.mass = BULLET_MASS;
+  bullet.mass = BULLET_MASS * modifiers.bullet_mass_m + modifiers.bullet_mass_a;
   bullet.collider = BOX;
   bullet.width = 10;
   bullet.height = 1;
@@ -1001,7 +1058,7 @@ const addRocket = (position, rotation, velocity, angularVelocity, targets) => {
   rocket.rotation = rotation;
   rocket.velocity = velocity;
   rocket.angularVelocity = angularVelocity;
-  rocket.mass = BULLET_MASS;
+  rocket.mass = BULLET_MASS * modifiers.bullet_mass_m + modifiers.bullet_mass_a;
   rocket.radius = 5;
   rocket.targets = targets;
   rocket.progress = 0;
@@ -1107,16 +1164,6 @@ const addPowerup = (type, position, rotation, velocity, angularVelocity) => {
 
   renderer.addEntity(renderer.POWERUP, powerup);
   powerups.push(powerup);
-};
-
-const togglePause = () => {
-  paused = !paused;
-  if (paused) {
-    ui.showPauseMenu();
-    setPropulsionVolume(0);
-  } else {
-    ui.hidePauseMenu();
-  }
 };
 
 const removeSpaceshipFromRenderer = () => {

@@ -86,6 +86,18 @@ export const randomRangeWithProbability = (values, probabilities) => {
   return values[probabilities.length - 1];
 };
 
+export const randomIndexWithProbability = (probabilities) => {
+  const randomValue = Math.random();
+  let cumulativeProbability = 0;
+  for (let i = 0; i < probabilities.length; i++) {
+    cumulativeProbability += probabilities[i];
+    if (randomValue < cumulativeProbability) {
+      return i;
+    }
+  }
+  return probabilities.length - 1;
+};
+
 export const randomAsteroidType = () => {
   const types = ["default", "split", "homing", "armored", "turret", "golden"];
   const probabilities = [0.77, 0.05, 0.05, 0.05, 0.05, 0.03];

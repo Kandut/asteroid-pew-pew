@@ -1,5 +1,6 @@
-import * as ui from "./ui.js";
-import * as sound from "./sound.js";
+import * as ui from "../ui.js";
+import * as sound from "../sound.js";
+import {addToStat} from "./rogue.js";
 
 const shopMenuView = document.getElementById("shop");
 
@@ -13,7 +14,7 @@ const experienceGainButton = document.getElementById("shop-experience-gain");
 
 let shop = {}
 
-let currentCoins = 10000;
+let currentCoins = 0;
 let totalCoins = 0;
 
 export const handleGetCoins = (coins) => {
@@ -24,7 +25,7 @@ export const handleGetCoins = (coins) => {
 }
 
 export const resetShop = () => {
-    currentCoins = 10000;
+    currentCoins = 0;
     totalCoins = 0;
 
     shop = {
@@ -34,7 +35,7 @@ export const resetShop = () => {
           "price": 100,
           "button": bulletAttackSpeedButton
         },
-        "bullet_attack_compression": { //reduced attack speed, but increases bullet damage accordingly (helps to not lag the game)
+        "bullet_compression": { //reduced attack speed, but increases bullet damage accordingly (helps to not lag the game)
           "level": 0,
           "scaling": 1.2,
           "price": 100,
@@ -76,10 +77,30 @@ function buy(key) {
 
         shop[key].button.innerText = formatNumberName(shop[key].price) + "💲";
 
+        switch (key) {
+            case "bullet_attack_speed": 
+                addToStat(key + "_m", 0.05);
+                break;
+
+            case "bullet_compression": 
+                addToStat(key, 1);
+                break;
+
+            case "rocket_attack_speed": 
+                addToStat(key + "_m", 0.05);
+                break;
+
+            case "rocket_piercing": 
+                addToStat(key + "_a", 1);
+                break;
+
+            case "experience_gain": 
+                addToStat(key + "_m", 0.05);
+                break;
+        }
+
         ui.updateCoins(currentCoins);
     } else {
-        console.log(currentCoins +">="+ shop[key].price)
-
         sound.playClickSound();
     }
 }
@@ -98,8 +119,8 @@ const formatNumberName = (number) => {
 export const initialiseShop = () => {
     bulletAttackSpeedButton.innerText = shop.bullet_attack_speed.price + "💲";
     bulletAttackSpeedButton.onclick = () => {buy("bullet_attack_speed")};
-    bulletCompressionButton.innerText = shop.bullet_attack_compression.price + "💲";
-    bulletCompressionButton.onclick = () => {buy("bullet_attack_compression")};
+    bulletCompressionButton.innerText = shop.bullet_compression.price + "💲";
+    bulletCompressionButton.onclick = () => {buy("bullet_compression")};
     rocketAttackSpeedButton.innerText = shop.rocket_attack_speed.price + "💲";
     rocketAttackSpeedButton.onclick = () => {buy("rocket_attack_speed")};
     rocketPiercingButton.innerText = shop.rocket_piercing.price + "💲";
@@ -111,8 +132,6 @@ export const initialiseShop = () => {
 }
 
 export const toggleShop = () => {
-    console.log("here")
-
     if (shopMenuView.style.display == "none") {
         showShop();
     } else {
@@ -121,7 +140,6 @@ export const toggleShop = () => {
 }
 
 export const hideShop = () => {
-    console.log("hiding shop")
     shopMenuView.style.display = "none";
 }
 
