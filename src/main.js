@@ -43,6 +43,7 @@ import spaceshipUrl from "/img/Spaceship.png?url";
 import wingLeftUrl from "/img/WingLeft.png?url";
 import wingRightUrl from "/img/WingRight.png?url";
 import * as ui from "./util/ui.js";
+import * as shop from "./util/shop.js";
 
 import { createFragementTexture, prepareVornoi } from "./features/VoronoiFracture.js";
 
@@ -87,6 +88,7 @@ const setMovementEnabled = (enabled) => (movementEnabled = enabled);
 let updatesLastSecond = 0;
 let framesLastSecond = 0;
 let lastMenueToggle = 0;
+let lastShopToggle = 0;
 
 // entities
 let asteroids = [];
@@ -136,43 +138,11 @@ const setHitlessModeEnabled = (enabled) => {
 let powerupCooldown = 10000;
 let lastPowerupTime = 0;
 
-// coins
-let currentCoins = 0;
-let totalCoins = 0;
-
-let shop = {
-  "bullet_attack_speed": { // increases attack speed
-    "level": 0,
-    "scaling": 1.2,
-    "price": 100
-  },
-  "bullet_attack_compression": {
-    "level": 0,
-    "scaling": 1.2,
-    "price": 100
-  },
-  "rocket_attack_speed": {
-    "level": 0,
-    "scaling": 1.2,
-    "price": 100
-  },
-  "rocket_piercing": {
-    "level": 0,
-    "scaling": 1.2,
-    "price": 100
-  },
-  "experience_gain": {
-    "level": 0,
-    "scaling": 1.2,
-    "price": 100
-  }
-}
-
 // level
 let currentLevel = 1;
 let currentExperience = 0;
-let experienceNeeded = 20;
-let experienceScaling = 2; // needed * scaling ^ level
+let experienceNeeded = 200;
+let experienceScaling = 100; // needed = scaling * level
 
 let movement = {
   forward: false,
@@ -259,6 +229,11 @@ const controllerInput = (now) => {
   } else {
     shootingBullets = false;
   }
+  if (gamepad.buttons[8].pressed && gamepad.buttons[8].value >= 0.5 && now - 300 >= lastShopToggle) {
+    paused = !paused;
+    shop.toggleShop();
+    lastShopToggle = now;
+  }
   if (gamepad.buttons[6].pressed && gamepad.buttons[6].value >= 0.5) {
     shootingRockets = !paused && weaponsEnabled;
   } else {
@@ -320,6 +295,11 @@ const initInput = () => {
     switch (event.key) {
       case "Escape":
         togglePause();
+        break;
+      case "e":
+      case "E":
+        paused = !paused;
+        shop.toggleShop();
         break;
       case " ":
         shootingBullets = !paused && weaponsEnabled;
@@ -637,13 +617,6 @@ const handleDamageTaken = () => {
   }
 };
 
-const handleGetCoins = (coins) => {
-  currentCoins += coins;
-  totalCoins += coins;
-
-  ui.updateCoins(currentCoins);
-}
-
 const handleExperienceGain = (experience) => {
   currentExperience += experience;
   
@@ -651,7 +624,7 @@ const handleExperienceGain = (experience) => {
     currentLevel += 1;
     currentExperience -= experienceNeeded;
 
-    experienceNeeded = experienceNeeded * experienceScaling;
+    experienceNeeded += experienceScaling;
   }
 
   ui.updateLevel(currentExperience, experienceNeeded, currentLevel);
@@ -781,7 +754,7 @@ const update = (deltaTime) => {
             asteroid.hp -= bulletDamage;
 
             if (asteroid.type == "golden") {
-              handleGetCoins(1);
+              shop.handleGetCoins(1);
             }
             
             if (asteroid.hp <= 0) {
@@ -811,6 +784,8 @@ const update = (deltaTime) => {
     rocket.progress += (deltaTime / 1000) * rocketVelocity;
     pathInterpolate(rocket, rocket.progress, (target) => {
       target.remove = true;
+      target.dropCoins = true;
+      target.giveExp = true;
       ++gameState.asteroidsDestroyed;
       gameState.damageDealt += target.hp;
       playExplosionSound();
@@ -908,7 +883,7 @@ const cleanUpEntities = () => {
       }
 
       if (asteroid.dropCoins) {
-        handleGetCoins(asteroid.type == "golden" ? 200 : asteroid.type == "default" ? Math.round(Math.random() * 5) : 10);
+        shop.handleGetCoins(asteroid.type == "golden" ? 200 : asteroid.type == "default" ? Math.round(Math.random() * 5) : 10);
       }
 
       renderer.removeEntity(renderer.ASTEROID, asteroid.id);
@@ -1202,32 +1177,12 @@ const resetGame = () => {
   rockets = [];
   asteroidCooldown = 1000;
 
-  currentCoins = 0;
-  totalCoins = 0;
+  shop.resetShop();
 
-  shop = {
-    "bullet_attack_speed": {
-      ...shop.bullet_attack_speed,
-      "level": 0,
-    },
-    "bullet_attack_compression": {
-      ...shop.bullet_attack_compression,
-      "level": 0,
-    },
-    "rocket_attack_speed": {
-      ...shop.rocket_attack_speed,
-      "level": 0,
-    },
-    "rocket_piercing": {
-      ...shop.rocket_piercing,
-      "level": 0,
-    },
-  }
-
-  currentLevel = 0;
+  currentLevel = 1;
   currentExperience = 0;
-  experienceNeeded = 20;
-  experienceScaling = 2;
+  experienceNeeded = 200;
+  experienceScaling = 100;
 
   rocketPiercing = 3;
   bulletDamage = 1;

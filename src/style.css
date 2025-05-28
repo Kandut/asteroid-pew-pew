@@ -304,6 +304,22 @@ button {
   }
 }
 
+#shop {
+  display: none;
+    align-items: stretch;
+    background-color: #000d;
+    backdrop-filter: blur(2px);
+    padding: 1rem;
+    gap: var(--normal-gap);
+    width: 420px;
+    filter: var(--drop-shadow-3d);
+    border: 2px solid white;
+
+  > button {
+    float: right;
+  }
+}
+
 label {
   display: flex;
   align-items: center;

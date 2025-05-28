@@ -50,6 +50,7 @@ const controlsRocketView = document.getElementById("controls-rocket");
 const currentLevelView = document.getElementById("current-level");
 const currentLevelProgress = document.getElementById("level-progress");
 const currentCoinsView = document.getElementById("coins");
+const shopCoinsView = document.getElementById("shop-coins");
 
 export const init = (
   start,
@@ -298,16 +299,21 @@ export const setMaxHp = (maxHp) => {
 };
 
 export const updateLevel = (currentExperience, experienceNeeded, level) => {
+
+  console.log(level)
+  console.log(experienceNeeded)
+
   currentLevelProgress.value = currentExperience;
   currentLevelProgress.max = experienceNeeded;
   currentLevelView.innerText = level;
 }
 
 export const updateCoins = (coins) => {
-  currentCoinsView.innerText = formatNumber(coins);
+  currentCoinsView.innerText = formatNumberEnglish(coins);
+  shopCoinsView.innerText = formatNumberEnglish(coins);
 }
 
-const formatNumber = (number) => {
+const formatNumberEnglish = (number) => {
   const formatter = new Intl.NumberFormat("en-GB");
   let string = "";
   formatter.formatToParts(number).forEach((v) => {
