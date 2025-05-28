@@ -38,6 +38,7 @@ import asteroidRedUrl from "/img/asteroid_red.png?url";
 // import asteroidArmoredUrl from "/img/asteroid_armored.png?url";
 import asteroidArmoredUrl from "/img/asteroid_armored.avif?url";
 import asteroidGreenUrl from "/img/asteroid_green.png?url";
+import asteroidGoldUrl from "/img/asteroid_gold.png?url";
 import spaceshipUrl from "/img/Spaceship.png?url";
 import wingLeftUrl from "/img/WingLeft.png?url";
 import wingRightUrl from "/img/WingRight.png?url";
@@ -120,6 +121,7 @@ const asteroidTextures = {
   armored: asteroidArmoredUrl,
   turret: asteroidGreenUrl,
   split: asteroidSplitIUrl,
+  golden: asteroidGoldUrl
 };
 
 let extremeModeEnabled = false;
@@ -133,6 +135,44 @@ const setHitlessModeEnabled = (enabled) => {
 // powerups
 let powerupCooldown = 10000;
 let lastPowerupTime = 0;
+
+// coins
+let currentCoins = 0;
+let totalCoins = 0;
+
+let shop = {
+  "bullet_attack_speed": { // increases attack speed
+    "level": 0,
+    "scaling": 1.2,
+    "price": 100
+  },
+  "bullet_attack_compression": {
+    "level": 0,
+    "scaling": 1.2,
+    "price": 100
+  },
+  "rocket_attack_speed": {
+    "level": 0,
+    "scaling": 1.2,
+    "price": 100
+  },
+  "rocket_piercing": {
+    "level": 0,
+    "scaling": 1.2,
+    "price": 100
+  },
+  "experience_gain": {
+    "level": 0,
+    "scaling": 1.2,
+    "price": 100
+  }
+}
+
+// level
+let currentLevel = 1;
+let currentExperience = 0;
+let experienceNeeded = 20;
+let experienceScaling = 2; // needed * scaling ^ level
 
 let movement = {
   forward: false,
@@ -597,6 +637,26 @@ const handleDamageTaken = () => {
   }
 };
 
+const handleGetCoins = (coins) => {
+  currentCoins += coins;
+  totalCoins += coins;
+
+  ui.updateCoins(currentCoins);
+}
+
+const handleExperienceGain = (experience) => {
+  currentExperience += experience;
+  
+  if (currentExperience >= experienceNeeded) {
+    currentLevel += 1;
+    currentExperience -= experienceNeeded;
+
+    experienceNeeded = experienceNeeded * experienceScaling;
+  }
+
+  ui.updateLevel(currentExperience, experienceNeeded, currentLevel);
+}
+
 const update = (deltaTime) => {
   processEvents();
 
@@ -707,6 +767,8 @@ const update = (deltaTime) => {
 
               ++gameState.asteroidsDestroyed;
               asteroid.remove = true;
+              asteroid.giveExp = true;
+              asteroid.dropCoins = true;
               asteroid.hp = 100;
               playExplosionSound();
               createFragments(fragments, asteroid);
@@ -717,9 +779,16 @@ const update = (deltaTime) => {
             gameState.bulletsHit++;
             gameState.damageDealt += Math.min(asteroid.hp, bulletDamage);
             asteroid.hp -= bulletDamage;
+
+            if (asteroid.type == "golden") {
+              handleGetCoins(1);
+            }
+            
             if (asteroid.hp <= 0) {
               ++gameState.asteroidsDestroyed;
               asteroid.remove = true;
+              asteroid.giveExp = true;
+              asteroid.dropCoins = true;
               playExplosionSound();
             }
             bullet.remove = true;
@@ -834,6 +903,14 @@ const cleanUpEntities = () => {
   // remove entities that are out of bounds
   asteroids.forEach((asteroid) => {
     if (asteroid.remove) {
+      if (asteroid.giveExp) {
+        handleExperienceGain(asteroid.type == "default" ? 5 : 10);
+      }
+
+      if (asteroid.dropCoins) {
+        handleGetCoins(asteroid.type == "golden" ? 200 : asteroid.type == "default" ? Math.round(Math.random() * 5) : 10);
+      }
+
       renderer.removeEntity(renderer.ASTEROID, asteroid.id);
       asteroid.frame = 0;
       renderer.addEntity(renderer.EXPLOSION, asteroid);
@@ -893,6 +970,8 @@ const addAsteroid = (
   asteroid.collider = boxColliders || type === "armored" ? BOX : DISC;
   asteroid.width = width || asteroid.radius * 2;
   asteroid.height = height || asteroid.radius * 2;
+  asteroid.dropCoins = false;
+  asteroid.giveExp = false;
 
   if (texture) {
     asteroid.texture = texture;
@@ -905,6 +984,8 @@ const addAsteroid = (
   if (type === "turret") {
     asteroid.lastBulletTime = now;
     asteroid.bulletIndex = 0;
+  } else if (type === "golden") {
+    asteroid.hp = 200;
   }
 
   // do not spawn asteroids inside each other
@@ -1120,6 +1201,33 @@ const resetGame = () => {
   bullets = [];
   rockets = [];
   asteroidCooldown = 1000;
+
+  currentCoins = 0;
+  totalCoins = 0;
+
+  shop = {
+    "bullet_attack_speed": {
+      ...shop.bullet_attack_speed,
+      "level": 0,
+    },
+    "bullet_attack_compression": {
+      ...shop.bullet_attack_compression,
+      "level": 0,
+    },
+    "rocket_attack_speed": {
+      ...shop.rocket_attack_speed,
+      "level": 0,
+    },
+    "rocket_piercing": {
+      ...shop.rocket_piercing,
+      "level": 0,
+    },
+  }
+
+  currentLevel = 0;
+  currentExperience = 0;
+  experienceNeeded = 20;
+  experienceScaling = 2;
 
   rocketPiercing = 3;
   bulletDamage = 1;

@@ -81,6 +81,10 @@ header {
     min-width: 4rem;
     text-align: right;
   }
+
+  > progress {
+    margin-right: 5px;
+  }
 }
 
 main {

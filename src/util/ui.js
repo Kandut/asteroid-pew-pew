@@ -47,6 +47,9 @@ const pauseBackToMainMenuButton = document.getElementById("pause-back-to-main-me
 const controlsMoveView = document.getElementById("controls-move");
 const controlsBulletView = document.getElementById("controls-bullet");
 const controlsRocketView = document.getElementById("controls-rocket");
+const currentLevelView = document.getElementById("current-level");
+const currentLevelProgress = document.getElementById("level-progress");
+const currentCoinsView = document.getElementById("coins");
 
 export const init = (
   start,
@@ -293,6 +296,25 @@ export const setMaxHp = (maxHp) => {
     hpView.appendChild(hp);
   }
 };
+
+export const updateLevel = (currentExperience, experienceNeeded, level) => {
+  currentLevelProgress.value = currentExperience;
+  currentLevelProgress.max = experienceNeeded;
+  currentLevelView.innerText = level;
+}
+
+export const updateCoins = (coins) => {
+  currentCoinsView.innerText = formatNumber(coins);
+}
+
+const formatNumber = (number) => {
+  const formatter = new Intl.NumberFormat("en-GB");
+  let string = "";
+  formatter.formatToParts(number).forEach((v) => {
+    string += v.value;
+  });
+  return string;
+}
 
 export const updateDebugHeader = (entityCount, fps, ups) => {
   entityCountView.innerText = `${entityCount}`;

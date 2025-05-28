@@ -87,13 +87,13 @@ export const randomRangeWithProbability = (values, probabilities) => {
 };
 
 export const randomAsteroidType = () => {
-  const types = ["default", "split", "homing", "armored", "turret"];
-  const probabilities = [0.8, 0.05, 0.05, 0.05, 0.05];
+  const types = ["default", "split", "homing", "armored", "turret", "golden"];
+  const probabilities = [0.77, 0.05, 0.05, 0.05, 0.05, 0.03];
   return onlySplitable ? "split" : randomRangeWithProbability(types, probabilities);
 };
 
 export const randomAsteroidTypeExtreme = () => {
-  const types = ["split", "homing", "armored", "turret"];
-  const probabilities = [0.25, 0.25, 0.25, 0.25];
+  const types = ["split", "homing", "armored", "turret", "golden"];
+  const probabilities = [0.22, 0.22, 0.22, 0.22, 0.12];
   return randomRangeWithProbability(types, probabilities);
 };
