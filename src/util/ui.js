@@ -53,6 +53,8 @@ const currentLevelView = document.getElementById("current-level");
 const currentLevelProgress = document.getElementById("level-progress");
 const currentCoinsView = document.getElementById("coins");
 const shopCoinsView = document.getElementById("shop-coins");
+const resourceListView = document.getElementById("resource-list");
+let plintinImageView, plintinAmountView, xeroniumImageView, xeroniumAmountView, blubboniumImageView, blubboniumAmountView;
 
 export const init = (
   start,
@@ -329,3 +331,55 @@ export const updateDebugHeader = (entityCount, fps, ups) => {
   fpsView.innerText = `${fps}`;
   upsView.innerText = `${ups}`;
 };
+
+export const initialiseResourceList = (resources) => {
+  const views = [];
+
+  for (let resource of resources) {
+    let div = document.createElement("div");
+    let img = document.createElement("img");
+    let span = document.createElement("span");
+
+    div.style.display = "flex";
+    div.style.alignItems = "center";
+
+    img.id = "resource-" + resource.name + "-image";
+    img.alt = resource.name + " icon";
+    img.src = resource.url;
+    img.height = 40;
+    img.width = 40;
+    img.margin = 5;
+
+    span.id = "resource-" + resource.name + "-amount";
+    span.innerText = "0";
+
+    div.appendChild(span);
+    div.appendChild(img);
+    
+    resourceListView.appendChild(div);
+
+    views.push(img);
+    views.push(span);
+  }
+
+  plintinImageView = views[0];
+  plintinAmountView = views[1];
+
+  xeroniumImageView = views[2];
+  xeroniumAmountView = views[3];
+
+  blubboniumImageView = views[4];
+  blubboniumAmountView = views[5];
+}
+
+export const updatePlintin = (plintin) => {
+  plintinAmountView.innerText = plintin;
+}
+
+export const updateXeronium = (xeronium) => {
+  xeroniumAmountView.innerText = xeronium;
+}
+
+export const updateBlubbonium = (blubbonium) => {
+  blubboniumAmountView.innerText = blubbonium;
+}

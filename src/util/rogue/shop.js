@@ -2,6 +2,10 @@ import * as ui from "../ui.js";
 import * as sound from "../sound.js";
 import {addToStat} from "./rogue.js";
 
+import plintinUrl from "/img/rogue/plintin.png?url";
+import xeroniumUrl from "/img/rogue/xeronium.png?url";
+import blubboniumUrl from "/img/rogue/blubbonium.png?url";
+
 const shopMenuView = document.getElementById("shop");
 
 const shopCoinsView = document.getElementById("shop-coins");
@@ -17,11 +21,45 @@ let shop = {}
 let currentCoins = 0;
 let totalCoins = 0;
 
+let currentPlintin = 0;
+let totalPlintin = 0;
+
+let currentXeronium = 0;
+let totalXeronium = 0;
+
+let currentBlubbonium = 0;
+let totalBlubbonium = 0;
+
 export const handleGetCoins = (coins) => {
     currentCoins += coins;
     totalCoins += coins;
   
     ui.updateCoins(currentCoins);
+}
+
+export const handleGetPlintin = (plintin) => {
+    currentPlintin += plintin;
+    totalPlintin += plintin;
+
+    ui.updatePlintin(currentPlintin);
+}
+
+export const handleGetXeronium = (xeronium) => {
+    currentXeronium += xeronium;
+    totalXeronium += xeronium;
+
+    ui.updateXeronium(currentXeronium);
+}
+
+export const handleGetBlubbonium = (blubbonium) => {
+    currentBlubbonium += blubbonium;
+    totalBlubbonium += blubbonium;
+
+    ui.updateBlubbonium(currentBlubbonium);
+}
+
+export const initialiseResources = () => {
+
 }
 
 export const resetShop = () => {
@@ -150,3 +188,19 @@ export const showShop = () => {
 hideShop();
 resetShop();
 initialiseShop();
+
+const resources = [
+    {
+        "name": "plintin",
+        "url": plintinUrl
+    },
+    {
+        "name": "xeronium",
+        "url": xeroniumUrl
+    },
+    {
+        "name": "blubbonium",
+        "url": blubboniumUrl
+    }
+]
+ui.initialiseResourceList(resources);

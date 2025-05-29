@@ -141,6 +141,8 @@ h1 {
   }
 }
 
+
+
 kbd {
   border: 3px solid currentColor;
   padding: 0.1rem 0.5rem;
@@ -488,4 +490,20 @@ label {
   > .menu {
     opacity: 0;
   }
+}
+
+
+#resource-list {
+  position: absolute;
+  top: 0;
+  right: 0;
+  align-items: center;
+  padding: 0.5rem;
+  color: white;
+  z-index: var(--z-index-ui);
+  filter: var(--drop-shadow-3d);
+
+  background-color: #000d;
+  backdrop-filter: blur(2px);
+  border: 2px solid white;
 }
