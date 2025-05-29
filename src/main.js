@@ -120,6 +120,7 @@ let rocketVelocity = 300;
 const setRocketSpeed = (value) => (rocketVelocity = value);
 
 // asteroids
+const baseAsteroidCooldown = 1000;
 let asteroidCooldown = 1000;
 let lastAsteroidTime = 0;
 const computeAsteroidCooldown = (elapsed) => Math.pow(0.99, elapsed / 1000) * 1000;
@@ -431,6 +432,8 @@ const updateStats = () => {
 
   powerupCooldown = basePowerupCooldown * (1 / modifiers.powerup_cooldown_m) - modifiers.powerup_cooldown_a;
 
+  asteroidCooldown = baseAsteroidCooldown * (1 / modifiers.asteroid_spawn_rate_m) - modifiers.asteroid_spawn_rate_a;
+
   ui.updateBulletDamage(bulletDamage);
   ui.updateFireRate(bulletCooldown);
   ui.updateRocketPiercing(rocketPiercing);
@@ -548,10 +551,6 @@ const processEvents = () => {
       x: target.x - position.x,
       y: target.y - position.y,
     };
-    // const velocity = {
-    //   x: 0,
-    //   y: 0,
-    // };
     const length = Math.sqrt(velocity.x ** 2 + velocity.y ** 2);
     if (length > 0) {
       velocity.x /= length;
@@ -743,7 +742,7 @@ const update = (deltaTime) => {
     }
 
     if (asteroid.type === "turret" && !asteroid.frozen) {
-      const nextCooldown = asteroid.bulletIndex % 5 === 0 ? enemyBulletCooldown * 50 : enemyBulletCooldown;
+      const nextCooldown = asteroid.bulletIndex % 5 === 0 ? enemyBulletCooldown * 50 * (1 / modifiers.asteroid_bullet_attack_speed_m) - modifiers.asteroid_bullet_attack_speed_a : enemyBulletCooldown;
       if (now - asteroid.lastBulletTime >= nextCooldown) {
         const direction = {
           x: spaceship.position.x - asteroid.position.x,
@@ -1002,12 +1001,12 @@ const addAsteroid = (
   asteroid.position = position;
   asteroid.rotation = rotation;
   asteroid.acceleration = acceleration;
-  asteroid.velocity = velocity;
+  asteroid.velocity = {x: velocity.x * modifiers.asteroid_speed_m, y: velocity * modifiers.asteroid_speed_m};
   asteroid.angularVelocity = angularVelocity;
-  asteroid.mass = calculateAsteroidMass(radius, type);
+  asteroid.mass = calculateAsteroidMass(radius, type) * modifiers.asteroid_mass_m + modifiers.asteroid_mass_a;
   asteroid.radius = type === "armored" ? radius * 2 : radius;
   asteroid.inertia = (2 / 5) * asteroid.mass * radius ** 2; // accurate but boring
-  asteroid.hp = radius / 2;
+  asteroid.hp = radius / 2 * modifiers.asteroid_health_m + modifiers.asteroid_health_a;
   asteroid.collider = boxColliders || type === "armored" ? BOX : DISC;
   asteroid.width = width || asteroid.radius * 2;
   asteroid.height = height || asteroid.radius * 2;

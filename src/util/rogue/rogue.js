@@ -87,6 +87,23 @@ export const modifiers = {
 
     powerup_cooldown_m: 1,
     powerup_cooldown_a: 0,
+
+    asteroid_radius_m: 1,
+    asteroid_radius_a: 0,
+
+    asteroid_mass_m: 1,
+    asteroid_mass_a: 0,
+
+    asteroid_speed_m: 1,
+
+    asteroid_bullet_attack_speed_m: 1,
+    asteroid_bullet_attack_speed_a: 0,
+
+    asteroid_health_m: 1,
+    asteroid_health_a: 0,
+
+    asteroid_spawn_rate_m: 1,
+    asteroid_spawn_rate_a: 0,
 }
 
 const chances = [0.40, 0.30, 0.15, 0.10, 0.05];
