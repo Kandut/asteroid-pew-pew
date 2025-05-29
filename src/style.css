@@ -192,14 +192,54 @@ kbd {
     backdrop-filter: blur(2px);
     padding: 1rem;
     gap: var(--normal-gap);
-    width: 420px;
+    width: 600px;
     filter: var(--drop-shadow-3d);
     border: 2px solid white;
+    grid-template-columns: auto auto auto auto;
+    gap: var(--normal-gap) 1rem;
 
-    > div {
+    > .pause-title {
       display: flex;
       justify-content: space-between;
       align-items: center;
+      grid-column: span 4;
+    }
+
+    h2 {
+      margin: unset;
+      margin-top: 1rem;
+      grid-column: span 4;
+    }
+
+    > div {
+      display: contents;
+
+      label #text {
+        grid-column: span 3;
+      }
+    }
+
+    label {
+      display: contents;
+      white-space: nowrap;
+      > input {
+        text-align: right;
+        place-self: end;
+      }
+
+      &:hover {
+        color: var(--accent);
+      }
+    }
+
+    > label[for="volume"] {
+      display: flex;
+      align-items: center;
+      grid-column: span 4;
+    }
+
+    > button {
+      grid-column: span 4;
     }
   }
 }
@@ -256,11 +296,20 @@ kbd {
   background: repeating-linear-gradient(
     rgba(0, 0, 0, 0.1) 0px,
     rgba(0, 0, 0, 0.1) 2px,
-    rgba(255, 255, 255, 0.1) 2px,
-    rgba(255, 255, 255, 0.1) 4px
+    rgba(255, 255, 255, 0.1) 3px,
+    rgba(255, 255, 255, 0.1) 5px,
+    rgba(0, 0, 0, 0.1) 6px
   );
+  background-size: 100% 6px;
   background-blend-mode: color-burn;
   z-index: var(--z-index-scanlines);
+  animation: scanlines 0.5s steps(60) infinite;
+}
+
+@keyframes scanlines {
+  0% {
+    background-position: 0 6px;
+  }
 }
 
 #overlay-blur {

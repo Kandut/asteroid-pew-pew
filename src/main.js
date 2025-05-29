@@ -35,8 +35,7 @@ import {
 import asteroid1Url from "/img/Asteroid1.png?url";
 import asteroidSplitIUrl from "/img/asteroid_split.png";
 import asteroidRedUrl from "/img/asteroid_red.png?url";
-// import asteroidArmoredUrl from "/img/asteroid_armored.png?url";
-import asteroidArmoredUrl from "/img/asteroid_armored.avif?url";
+import asteroidArmoredUrl from "/img/asteroid_armored.png?url";
 import asteroidGreenUrl from "/img/asteroid_green.png?url";
 import asteroidGoldUrl from "/img/asteroid_gold.png?url";
 import spaceshipUrl from "/img/Spaceship.png?url";
@@ -63,8 +62,10 @@ const SPACESHIP_MASS = 1;
 const SPACESHIP_FORCE = 0.0005;
 
 const calculateAsteroidMass = (radius, type) => {
-  const density = type === "armored" ? 4 : 3.5;
-  return (4 / 3) * Math.PI * radius ** 3 * density;
+  const density = type === "armored" ? 10 : 3.5;
+  return type === "armored"
+    ? (radius * 2) ** 3 * density // box shape
+    : (4 / 3) * Math.PI * radius ** 3 * density; // ball shape
 };
 
 // game state
@@ -518,8 +519,8 @@ const processEvents = () => {
     const targets = [
       {
         position: {
-          x: spaceship.position.x - Math.cos(spaceship.rotation) * 1000,
-          y: spaceship.position.y - Math.sin(spaceship.rotation) * 1000,
+          x: spaceship.position.x - Math.cos(spaceship.rotation) * 100,
+          y: spaceship.position.y - Math.sin(spaceship.rotation) * 100,
         },
       },
       {
@@ -543,7 +544,14 @@ const processEvents = () => {
       asteroid.torque = 0;
       targets.push(asteroid);
     }
-    targets.push(targets.at(-1));
+
+    const lastDiff = normalize(sub(targets.at(-1).position, targets.at(-2).position));
+    targets.push({
+      position: {
+        x: targets.at(-1).position.x + lastDiff.x * 100,
+        y: targets.at(-1).position.y + lastDiff.y * 100,
+      },
+    });
 
     addRocket({ ...spaceship.position }, spaceship.rotation, { x: 0, y: 0 }, 0, targets);
 
@@ -673,7 +681,7 @@ const handleDamageTaken = () => {
     return;
   }
   spaceship.hp -= 1;
-  spaceship.invincible = 120;
+  spaceship.invincible = 30;
   playSpaceshipCollisionSound();
   if (spaceship.hp >= 0) {
     ui.updateHp(spaceship.hp);
@@ -759,7 +767,7 @@ const update = (deltaTime) => {
     }
 
     if (asteroid.type === "turret" && !asteroid.frozen) {
-      const nextCooldown = asteroid.bulletIndex % 5 === 0 ? enemyBulletCooldown * 50 * (1 / modifiers.asteroid_bullet_attack_speed_m) - modifiers.asteroid_bullet_attack_speed_a : enemyBulletCooldown;
+      const nextCooldown = asteroid.bulletIndex % 5 === 0 ? enemyBulletCooldown * (extremeModeEnabled ? 10 : 50) * (1 / modifiers.asteroid_bullet_attack_speed_m) - modifiers.asteroid_bullet_attack_speed_a : enemyBulletCooldown;
       if (now - asteroid.lastBulletTime >= nextCooldown) {
         const direction = {
           x: spaceship.position.x - asteroid.position.x,
@@ -994,6 +1002,9 @@ const cleanUpEntities = () => {
       renderer.removeEntity(renderer.ROCKET, rocket.id);
       rocket.children.forEach((child) => {
         renderer.removeEntity(renderer.FLAMES, child.id);
+        for (const particle of child.children) {
+          renderer.removeEntity(renderer.FLAME_PARTICLES, particle.id);
+        }
       });
     }
   });
@@ -1031,9 +1042,12 @@ const addAsteroid = (
   asteroid.angularVelocity = angularVelocity;
   asteroid.mass = calculateAsteroidMass(radius, type) * modifiers.asteroid_mass_m + modifiers.asteroid_mass_a;
   asteroid.radius = type === "armored" ? radius * 2 : radius;
-  asteroid.inertia = (2 / 5) * asteroid.mass * radius ** 2; // accurate but boring
+  asteroid.inertia =
+    type === "armored"
+      ? (1 / 12) * asteroid.mass * ((asteroid.radius * 2) ** 2 + 4 * (asteroid.radius * 2) ** 2) // box shape
+      : (2 / 5) * asteroid.mass * radius ** 2; // ball shape
   asteroid.hp = radius / 2 * modifiers.asteroid_health_m + modifiers.asteroid_health_a;
-  asteroid.collider = boxColliders || type === "armored" ? BOX : DISC;
+  asteroid.collider = boxColliders || (width > 0 && height > 0) || type === "armored" ? BOX : DISC;
   asteroid.width = width || asteroid.radius * 2;
   asteroid.height = height || asteroid.radius * 2;
   asteroid.dropCoins = false;
@@ -1209,6 +1223,9 @@ const removeSpaceshipFromRenderer = () => {
       renderer.removeEntity(renderer.SPACESHIPPART, wing.id);
       for (let flame of wing.children) {
         renderer.removeEntity(renderer.FLAMES, flame.id);
+        for (let particle of flame.children) {
+          renderer.removeEntity(renderer.FLAME_PARTICLES, particle.id);
+        }
       }
     }
   }

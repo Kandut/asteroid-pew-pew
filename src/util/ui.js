@@ -2,6 +2,7 @@ import * as renderer from "../renderer/2d.js";
 import { playClickSound, playSubmitSound } from "./sound.js";
 import { setDisableVoronoiNoise } from "../main.js";
 import { setOnlySplitable } from "./random.js";
+import { setEasingFunctionEnabled } from "../features/PathInterpol.js";
 
 let entityCountView = document.getElementById("entity-count");
 let fpsView = document.getElementById("fps");
@@ -22,6 +23,7 @@ const debugVoronoiDisableNoise = document.getElementById("debug-disable-noise");
 const debugVoronoiSplitableOnly = document.getElementById("debug-split-only");
 const debugDrawCollisions = document.getElementById("debug-draw-collisions");
 const debugBoxColliders = document.getElementById("debug-box-colliders");
+const debugEasingFunctionEnabled = document.getElementById("debug-easing-function-enabled");
 const fireRateView = document.getElementById("fire-rate");
 const rocketPiercingView = document.getElementById("rocket-piercing");
 const bulletDamageView = document.getElementById("bullet-damage");
@@ -209,10 +211,14 @@ export const initPauseMenu = (
     playClickSound();
     setDebugBoxColliders(event.target.checked);
   });
+  debugEasingFunctionEnabled.addEventListener("change", (event) => {
+    playClickSound();
+    setEasingFunctionEnabled(event.target.checked);
+  });
 };
 
 export const showPauseMenu = () => {
-  pauseMenuView.style.display = "flex";
+  pauseMenuView.style.display = "grid";
 };
 
 export const hidePauseMenu = () => {
