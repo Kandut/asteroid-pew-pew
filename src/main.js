@@ -138,7 +138,7 @@ const asteroidTextures = {
 };
 
 // bosses
-const baseBossCooldown = 60 * 1000;
+const baseBossCooldown = 300 * 1000;
 let bossCooldown = baseBossCooldown;
 let lastBossTime = 0;
 
@@ -831,10 +831,15 @@ const update = (deltaTime) => {
           if (checkAndResolveCollision(bullet, asteroid, showFlash)) {
             gameState.bulletsHit++;
             gameState.damageDealt += Math.min(asteroid.hp, bulletDamage);
-            asteroid.hp -= bulletDamage;
+            
 
             if (asteroid.type == "golden") {
               shop.handleGetCoins(1);
+              asteroid.hp--;
+            } else if (asteroid.type == "Colossus") {
+              asteroid.hp--;
+            } else {
+              asteroid.hp -= bulletDamage;
             }
             
             if (asteroid.hp <= 0) {
@@ -963,7 +968,7 @@ const cleanUpEntities = () => {
       if (asteroid.type == "Colossus") {
         console.log("Removing Colossus")
       }
-      
+
       if (asteroid.giveExp) {
         handleExperienceGain(asteroid.type == "default" ? 5 : 10);
       }
@@ -1047,6 +1052,8 @@ const addAsteroid = (
     asteroid.bulletIndex = 0;
   } else if (type === "golden") {
     asteroid.hp = asteroid.hp * 10;
+  } else if (type === "Colossus") {
+    asteroid.hp = 3000 * modifiers.asteroid_health_m + modifiers.asteroid_health_a;
   }
 
   // do not spawn asteroids inside each other
