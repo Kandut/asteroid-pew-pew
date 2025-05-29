@@ -8,6 +8,7 @@ import submitUrl from "/audio/submit.wav?url";
 import powerupUrl from "/audio/powerup.wav?url";
 import backgroundMusicUrl from "/audio/CODEX_2015.mp3?url";
 import armorHit from "/audio/armorHit.wav?url";
+import pickupCoinUrl from "/audio/pickupCoin.wav?url";
 
 let volumeModifier = 0.1;
 export const setVolumeModifier = (value) => {
@@ -60,6 +61,12 @@ export const playBulletHitSound = () => {
   audio.volume = 0.2 * volumeModifier;
   audio.play().catch(() => {});
 };
+
+export const playPickupCoinSound = () => {
+  const audio = new Audio(pickupCoinUrl);
+  audio.volume = 0.2 * volumeModifier;
+  audio.play().catch(() => {});
+}
 
 export const playArmorHitSound = () => {
   const audio = new Audio(armorHit);

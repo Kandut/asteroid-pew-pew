@@ -27,6 +27,7 @@ import {
   playBulletHitSound,
   playBulletShootSound,
   playExplosionSound,
+  playPickupCoinSound,
   playPowerupSound,
   playSpaceshipCollisionSound,
   setPropulsionVolume,
@@ -835,16 +836,33 @@ const update = (deltaTime) => {
               createFragments(fragments, asteroid);
             }
           }
+        } else if (asteroid.type === "golden") {
+          if (checkAndResolveCollision(bullet, asteroid, showFlash)) {
+            gameState.bulletsHit++;
+            gameState.damageDealt += Math.min(asteroid.hp, bulletDamage);
+            
+            shop.handleGetCoins(1);
+            asteroid.hp--;
+            
+            if (asteroid.hp <= 0) {
+              ++gameState.asteroidsDestroyed;
+              asteroid.remove = true;
+              asteroid.giveExp = true;
+              asteroid.dropCoins = true;
+              shop.handleGetCoins(200);
+              playExplosionSound();
+            }
+            bullet.remove = true;
+            if (Math.random() > 0.7) {
+              playPickupCoinSound();
+            }
+          }
         } else {
           if (checkAndResolveCollision(bullet, asteroid, showFlash)) {
             gameState.bulletsHit++;
             gameState.damageDealt += Math.min(asteroid.hp, bulletDamage);
             
-
-            if (asteroid.type == "golden") {
-              shop.handleGetCoins(1);
-              asteroid.hp--;
-            } else if (asteroid.type == "Colossus") {
+            if (asteroid.type == "Colossus") {
               asteroid.hp--;
             } else {
               asteroid.hp -= bulletDamage;
@@ -982,7 +1000,7 @@ const cleanUpEntities = () => {
       }
 
       if (asteroid.dropCoins) {
-        shop.handleGetCoins(asteroid.type == "golden" ? 200 : asteroid.type == "default" ? Math.round(Math.random() * 5) : 10);
+        shop.handleGetCoins(Math.round(Math.random() * 5));
       }
 
       renderer.removeEntity(renderer.ASTEROID, asteroid.id);
