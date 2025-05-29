@@ -38,11 +38,11 @@ import asteroidSplitIUrl from "/img/asteroid_split.png";
 import asteroidRedUrl from "/img/asteroid_red.png?url";
 import asteroidArmoredUrl from "/img/asteroid_armored.png?url";
 import asteroidGreenUrl from "/img/asteroid_green.png?url";
-import asteroidGoldUrl from "/img/asteroid_gold.png?url";
+import asteroidGoldUrl from "/img/rogue/asteroid_gold.png?url";
 import spaceshipUrl from "/img/Spaceship.png?url";
 import wingLeftUrl from "/img/WingLeft.png?url";
 import wingRightUrl from "/img/WingRight.png?url";
-import bossesColossusUrl from "/img/colossus.png?url";
+import bossesColossusUrl from "/img/rogue/colossus.png?url";
 import * as ui from "./util/ui.js";
 
 import * as shop from "./util/rogue/shop.js";
