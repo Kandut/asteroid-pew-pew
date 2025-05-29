@@ -75,7 +75,11 @@ export const randomPowerupType = () => {
 };
 
 export const randomRangeWithProbability = (values, probabilities) => {
-  const randomValue = Math.random();
+  const sum = probabilities.reduce((res, cur) => {
+    return res + cur;
+  }, 0);
+
+  const randomValue = Math.random() * sum;
   let cumulativeProbability = 0;
   for (let i = 0; i < probabilities.length; i++) {
     cumulativeProbability += probabilities[i];
@@ -87,7 +91,11 @@ export const randomRangeWithProbability = (values, probabilities) => {
 };
 
 export const randomIndexWithProbability = (probabilities) => {
-  const randomValue = Math.random();
+  const sum = probabilities.reduce((res, cur) => {
+    return res + cur;
+  }, 0);
+
+  const randomValue = Math.random() * sum;
   let cumulativeProbability = 0;
   for (let i = 0; i < probabilities.length; i++) {
     cumulativeProbability += probabilities[i];
