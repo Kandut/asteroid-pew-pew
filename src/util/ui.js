@@ -299,10 +299,6 @@ export const setMaxHp = (maxHp) => {
 };
 
 export const updateLevel = (currentExperience, experienceNeeded, level) => {
-
-  console.log(level)
-  console.log(experienceNeeded)
-
   currentLevelProgress.value = currentExperience;
   currentLevelProgress.max = experienceNeeded;
   currentLevelView.innerText = level;

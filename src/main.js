@@ -42,9 +42,12 @@ import asteroidGoldUrl from "/img/asteroid_gold.png?url";
 import spaceshipUrl from "/img/Spaceship.png?url";
 import wingLeftUrl from "/img/WingLeft.png?url";
 import wingRightUrl from "/img/WingRight.png?url";
+import bossesColossusUrl from "/img/colossus.png?url";
 import * as ui from "./util/ui.js";
+
 import * as shop from "./util/rogue/shop.js";
 import {modifiers, handleLevelUp} from "./util/rogue/rogue.js";
+import * as bosses from "./util/rogue/bosses.js";
 
 import { createFragementTexture, prepareVornoi } from "./features/VoronoiFracture.js";
 
@@ -101,27 +104,27 @@ let powerups = [];
 
 // shooting
 const baseBulletDamage = 1;
-let bulletDamage = 1;
+let bulletDamage = baseBulletDamage;
 let bulletIndex = 0;
 let shootingBullets = false;
 let lastBulletTime = 0;
 const baseBulletCooldown = 40;
-let bulletCooldown = 40; // in ms
+let bulletCooldown = baseBulletCooldown; // in ms
 let enemyBulletCooldown = 80; // in ms
 
 // rockets
 const baseRocketPiercing = 3;
-let rocketPiercing = 3;
+let rocketPiercing = baseRocketPiercing;
 let shootingRockets = false;
 const baseRocketCooldown = 3000;
-let rocketCooldown = 3000; // in ms
+let rocketCooldown = baseRocketCooldown; // in ms
 let lastRocketTime = 0;
 let rocketVelocity = 300;
 const setRocketSpeed = (value) => (rocketVelocity = value);
 
 // asteroids
 const baseAsteroidCooldown = 1000;
-let asteroidCooldown = 1000;
+let asteroidCooldown = baseAsteroidCooldown;
 let lastAsteroidTime = 0;
 const computeAsteroidCooldown = (elapsed) => Math.pow(0.99, elapsed / 1000) * 1000;
 const asteroidTextures = {
@@ -130,8 +133,14 @@ const asteroidTextures = {
   armored: asteroidArmoredUrl,
   turret: asteroidGreenUrl,
   split: asteroidSplitIUrl,
-  golden: asteroidGoldUrl
+  golden: asteroidGoldUrl,
+  Colossus: bossesColossusUrl,
 };
+
+// bosses
+const baseBossCooldown = 60 * 1000;
+let bossCooldown = baseBossCooldown;
+let lastBossTime = 0;
 
 let extremeModeEnabled = false;
 const setExtremeModeEnabled = (enabled) => (extremeModeEnabled = enabled);
@@ -487,7 +496,7 @@ const doFrame = () => {
 const processEvents = () => {
   // bullets
   if (shootingBullets && now - lastBulletTime >= bulletCooldown && spaceship) {
-    const rotation = spaceship.rotation + (Math.random() - 0.5) * 0.1;
+    let rotation = modifiers.shoot_random_direction ? Math.random() * 360 : spaceship.rotation + (Math.random() - 0.5) * 0.1;
     const offsetMultiplier = bulletIndex % 2 === 0 ? -1 : 1;
     const bulletPosition = angleToUnitVector(spaceship.rotation + (Math.PI / 2) * offsetMultiplier);
     bulletPosition.x *= 10;
@@ -524,7 +533,7 @@ const processEvents = () => {
       let asteroid;
       do {
         asteroid = asteroids[Math.floor(Math.random() * asteroids.length)];
-      } while (targets.includes(asteroid));
+      } while (targets.includes(asteroid) || bosses.bossTypes.includes(asteroid.type));
       asteroid.frozen = true;
       asteroid.velocity.x = 0;
       asteroid.velocity.y = 0;
@@ -539,6 +548,12 @@ const processEvents = () => {
     addRocket({ ...spaceship.position }, spaceship.rotation, { x: 0, y: 0 }, 0, targets);
 
     lastRocketTime = now;
+  }
+
+  // bosses
+  if (now - lastBossTime >= bossCooldown) {
+    bosses.addBoss(addAsteroid);
+    lastBossTime = now;
   }
 
   // spawn new asteroids
@@ -641,8 +656,10 @@ const processEvents = () => {
   }
 };
 
-const outOfBounds = (position) => {
-  const padding = 100;
+const outOfBounds = (position, padding) => {
+  if (!padding || isNaN(padding)) {
+    padding = 100;
+  }
   return (
     position.x < 0 - padding ||
     position.x > canvas.width + padding ||
@@ -723,7 +740,7 @@ const update = (deltaTime) => {
     }
 
     velocityVerlet(asteroid, deltaTime);
-    if (outOfBounds(asteroid.position)) {
+    if (bosses.bossTypes.includes(asteroid.type) ? outOfBounds(asteroid.position, 10000) : outOfBounds(asteroid.position)) {
       asteroid.remove = true;
       shop.handleGetCoins(1);
     }
@@ -943,6 +960,10 @@ const cleanUpEntities = () => {
   // remove entities that are out of bounds
   asteroids.forEach((asteroid) => {
     if (asteroid.remove) {
+      if (asteroid.type == "Colossus") {
+        console.log("Removing Colossus")
+      }
+      
       if (asteroid.giveExp) {
         handleExperienceGain(asteroid.type == "default" ? 5 : 10);
       }
@@ -1001,7 +1022,7 @@ const addAsteroid = (
   asteroid.position = position;
   asteroid.rotation = rotation;
   asteroid.acceleration = acceleration;
-  asteroid.velocity = {x: velocity.x * modifiers.asteroid_speed_m, y: velocity * modifiers.asteroid_speed_m};
+  asteroid.velocity = {x: velocity.x * modifiers.asteroid_speed_m, y: velocity.y * modifiers.asteroid_speed_m};
   asteroid.angularVelocity = angularVelocity;
   asteroid.mass = calculateAsteroidMass(radius, type) * modifiers.asteroid_mass_m + modifiers.asteroid_mass_a;
   asteroid.radius = type === "armored" ? radius * 2 : radius;
@@ -1191,6 +1212,7 @@ const initGame = () => {
   canvas.height = canvas.clientHeight;
   addSpaceship({ x: canvas.width / 2, y: canvas.height / 2 }, 0, { x: 0, y: 0 }, 0);
   ui.setMaxHp(hitlessModeEnabled ? 1 : 5);
+  lastBossTime = 100;
 };
 
 const startGame = () => {

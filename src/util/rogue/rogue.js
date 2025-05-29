@@ -60,6 +60,15 @@ export const singleTimeUpgrades = [
             multiplyStat("bullet_mass_m", 2);
             multiplyStat("bullet_damage_m", 0.5);
         }
+    },
+    {
+        "title": "No more control, BUT DAMAGE!",
+        "description": "Shoot in random directions but deal +1000% damage",
+        "active": false,
+        "callback": () => {
+            enableModifier("shoot_random_direction");
+            multiplyStat("bullet_damage_m", 10);
+        }
     }
 ]
 
@@ -104,6 +113,8 @@ export const modifiers = {
 
     asteroid_spawn_rate_m: 1,
     asteroid_spawn_rate_a: 0,
+
+    shoot_random_direction: false,
 }
 
 const chances = [0.40, 0.30, 0.15, 0.10, 0.05];
@@ -117,6 +128,11 @@ export const multiplyStat = (key, multi) => {
     modifiers.changes = true;
     modifiers[key] *= multi;
 }
+
+export const enableModifier = (key) => {
+    modifiers.changes = true;
+    modifiers[key] = true;
+} 
 
 export const handleLevelUp = (onselect) => {
     const availableBoni = singleTimeUpgrades.filter((it) => !it.active);
@@ -152,13 +168,12 @@ export const handleLevelUp = (onselect) => {
 }
 
 function showUpgrade(title, description, view, upgrade, onselect) {
-    console.log(upgrade)
-
     if (upgrade.levels == undefined) {
         title.innerText = upgrade.title;
         description.innerText = upgrade.description;
         view.onclick = () => {
-            upgrade.callback;
+            upgrade.callback();
+            upgrade.active = true;
             levelupMenuView.style.display = "none";
             onselect();
         }
