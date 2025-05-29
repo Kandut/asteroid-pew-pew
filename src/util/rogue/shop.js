@@ -21,6 +21,8 @@ let shop = {}
 let currentCoins = 0;
 let totalCoins = 0;
 
+export const resourceTypes = ["plintin", "xeronium", "blubbonium"];
+
 let currentPlintin = 0;
 let totalPlintin = 0;
 

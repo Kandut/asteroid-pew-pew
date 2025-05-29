@@ -39,6 +39,9 @@ import asteroidRedUrl from "/img/asteroid_red.png?url";
 import asteroidArmoredUrl from "/img/asteroid_armored.png?url";
 import asteroidGreenUrl from "/img/asteroid_green.png?url";
 import asteroidGoldUrl from "/img/rogue/asteroid_gold.png?url";
+import asteroidPlintinUrl from "/img/rogue/plintin_asteroid.png?url";
+import asteroidXeroniumUrl from "/img/rogue/xeronium_asteroid.png?url";
+import asteroidBlubboniumUrl from "/img/rogue/blubbonium_asteroid.png?url";
 import spaceshipUrl from "/img/Spaceship.png?url";
 import wingLeftUrl from "/img/WingLeft.png?url";
 import wingRightUrl from "/img/WingRight.png?url";
@@ -135,7 +138,12 @@ const asteroidTextures = {
   armored: asteroidArmoredUrl,
   turret: asteroidGreenUrl,
   split: asteroidSplitIUrl,
+  
   golden: asteroidGoldUrl,
+  plintin: asteroidPlintinUrl,
+  xeronium: asteroidXeroniumUrl,
+  blubbonium: asteroidBlubboniumUrl,
+
   Colossus: bossesColossusUrl,
 };
 
@@ -869,6 +877,10 @@ const update = (deltaTime) => {
             }
             
             if (asteroid.hp <= 0) {
+              if (asteroid.dropResource === false) {
+                asteroid.dropResource = true;
+              }
+
               ++gameState.asteroidsDestroyed;
               asteroid.remove = true;
               asteroid.giveExp = true;
@@ -895,6 +907,9 @@ const update = (deltaTime) => {
     rocket.progress += (deltaTime / 1000) * rocketVelocity;
     pathInterpolate(rocket, rocket.progress, (target) => {
       target.remove = true;
+      if (target.dropResource === false) {
+        target.dropResource = true;
+      }
       target.dropCoins = true;
       target.giveExp = true;
       ++gameState.asteroidsDestroyed;
@@ -991,16 +1006,22 @@ const cleanUpEntities = () => {
   // remove entities that are out of bounds
   asteroids.forEach((asteroid) => {
     if (asteroid.remove) {
-      if (asteroid.type == "Colossus") {
-        console.log("Removing Colossus")
-      }
-
       if (asteroid.giveExp) {
         handleExperienceGain(asteroid.type == "default" ? 5 : 10);
       }
 
       if (asteroid.dropCoins) {
         shop.handleGetCoins(Math.round(Math.random() * 5));
+      }
+
+      if (asteroid.dropResource) {
+        if (asteroid.type === "plintin") {
+          shop.handleGetPlintin(Math.round(Math.random() * 4) + 1);
+        } else if (asteroid.type === "xeronium") {
+          shop.handleGetXeronium(Math.round(Math.random() * 4) + 1);
+        } else if (asteroid.type === "blubbonium") {
+          shop.handleGetBlubbonium(Math.round(Math.random() * 4) + 1);
+        }
       }
 
       renderer.removeEntity(renderer.ASTEROID, asteroid.id);
@@ -1083,9 +1104,12 @@ const addAsteroid = (
     asteroid.lastBulletTime = now;
     asteroid.bulletIndex = 0;
   } else if (type === "golden") {
-    asteroid.hp = asteroid.hp * 10;
+    asteroid.hp *= 10;
   } else if (type === "Colossus") {
     asteroid.hp = 3000 * modifiers.asteroid_health_m + modifiers.asteroid_health_a;
+  } else if (shop.resourceTypes.includes(type)) {
+    asteroid.dropResource = false;
+    asteroid.hp *= 2;
   }
 
   // do not spawn asteroids inside each other
