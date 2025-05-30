@@ -28,6 +28,7 @@ import {
   playBulletShootSound,
   playExplosionSound,
   playPickupCoinSound,
+  playPickupResourceSound,
   playPowerupSound,
   playSpaceshipCollisionSound,
   setPropulsionVolume,
@@ -749,7 +750,7 @@ const openAbilityMenue = () => {
   handleObtainAbility(() => {
     updateStats();
     resume();
-  });
+  }, true);
 }
 
 const update = (deltaTime) => {
@@ -884,7 +885,7 @@ const update = (deltaTime) => {
               asteroid.giveExp = true;
               asteroid.dropCoins = true;
               shop.handleGetCoins(200);
-              playExplosionSound();
+              playPickupCoinSound();
             }
             bullet.remove = true;
             if (Math.random() > 0.7) {
@@ -903,6 +904,17 @@ const update = (deltaTime) => {
             }
             
             if (asteroid.hp <= 0) {
+              switch (asteroid.type) {
+                case "plintin":
+                case "xeronium":
+                case "blubbonium":
+                  playPickupResourceSound();
+                  break;
+                default:
+                  playExplosionSound();
+                  break;
+              }
+
               if (asteroid.dropResource === false) {
                 asteroid.dropResource = true;
               }
@@ -944,7 +956,19 @@ const update = (deltaTime) => {
       target.giveExp = true;
       ++gameState.asteroidsDestroyed;
       gameState.damageDealt += target.hp;
-      playExplosionSound();
+      switch (target.type) {
+        case "plintin":
+        case "xeronium":
+        case "blubbonium":
+          playPickupResourceSound();
+          break;
+        case "golden":
+          playPickupCoinSound();
+          break;
+        default:
+          playExplosionSound();
+          break;
+      }
       if (rocket.currentTarget >= rocket.targets.length - 4) {
         rocket.remove = true;
         return;
@@ -959,40 +983,47 @@ const update = (deltaTime) => {
     }
     if (checkCollisionBoxBox(powerup, spaceship)) {
       powerup.remove = true;
-      playPowerupSound();
       switch (powerup.type) {
         case "health":
           spaceship.hp += 1;
           spaceship.hp = Math.min(spaceship.hp, spaceship.maxHp);
           ui.updateHp(spaceship.hp);
+          playPowerupSound();
           break;
         case "damage":
           collectedPowerups.bullet_damage++;
           collectedPowerups.changes = true;
           ui.updateBulletDamage(bulletDamage);
+          playPowerupSound();
           break;
         case "rocket-piercing":
           collectedPowerups.rocket_piercing++;
           collectedPowerups.changes = true;
           ui.updateRocketPiercing(rocketPiercing);
+          playPowerupSound();
           break;
         case "coins":
           shop.handleGetCoins(100);
+          playPickupCoinSound();
           break;
         case "experience":
           handleExperienceGain(100);
+          playPowerupSound();
           break;
         case "ability":
           openAbilityMenue();
           break;
         case "plintin":
           shop.handleGetPlintin(15);
+          playPickupResourceSound();
           break;
         case "xeronium":
           shop.handleGetXeronium(15);
+          playPickupResourceSound();
           break;
         case "blubbonium":
           shop.handleGetBlubbonium(15);
+          playPickupResourceSound();
           break;
       }
     }

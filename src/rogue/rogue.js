@@ -1,8 +1,12 @@
 import { gameState } from "../util/gamestatistics";
 import { randomIndexWithProbability } from "../util/random";
+import { playClickSound, playFailedSound, playSpaceshipCollisionSound } from "../util/sound";
+import { updatePlintin } from "../util/ui";
+import { currentPlintin, handleGetPlintin } from "./shop";
+
+import plintinUrl from "/img/rogue/plintin.png?url";
 
 const levelupMenuView = document.getElementById("levelup-menu");
-
 const level1View = document.getElementById("levelup-1");
 const levelupTitle1 = document.getElementById("levelup-1-title");
 const levelupDescription1 = document.getElementById("levelup-1-description");
@@ -12,6 +16,13 @@ const levelupDescription2 = document.getElementById("levelup-2-description");
 const level3View = document.getElementById("levelup-3");
 const levelupTitle3 = document.getElementById("levelup-3-title");
 const levelupDescription3 = document.getElementById("levelup-3-description");
+const rerollAbilitiesButton = document.getElementById("reroll-abilities");
+const rerollAbilitiesPriceView = document.getElementById("reroll-abilities-price");
+const rerollAbilitiesImage = document.getElementById("reroll-abilities-price-img");
+
+const baseRerollPrice = 15;
+let rerollPrice = baseRerollPrice;
+const rerollPriceAddition = 3;
 
 export const allBoni = [
     {
@@ -90,10 +101,14 @@ export const multiplyStat = (key, multi) => {
 export const enableModifier = (key) => {
     modifiers.changes = true;
     modifiers[key] = true;
-} 
+}
 
-export const handleObtainAbility = (onselect) => {
-    gameState.abilitiesObtained++;
+export const handleObtainAbility = (onselect, reset) => {
+    if (reset === true) {
+        rerollPrice = baseRerollPrice;
+    }
+
+    rerollAbilitiesPriceView.innerText = rerollPrice;
 
     const availableBoni = singleTimeUpgrades.filter((it) => !it.active);
 
@@ -120,11 +135,24 @@ export const handleObtainAbility = (onselect) => {
 
     upgrades = upgrades.map((it) => {return pool[it]});
 
-    levelupMenuView.style.display = "block";
+    levelupMenuView.style.display = "grid";
+
+    rerollAbilitiesButton.onclick = handleReroll(onselect);
 
     showUpgrade(levelupTitle1, levelupDescription1, level1View, upgrades[0], onselect);
     showUpgrade(levelupTitle2, levelupDescription2, level2View, upgrades[1], onselect);
     showUpgrade(levelupTitle3, levelupDescription3, level3View, upgrades[2], onselect);
+}
+
+function handleReroll(onselect) {
+    if (currentPlintin >= rerollPrice) {
+        playClickSound();
+        handleGetPlintin(-rerollPrice);
+        rerollPrice += rerollPriceAddition;
+        handleObtainAbility(onselect, false);
+    } else {
+        playFailedSound();
+    }
 }
 
 function showUpgrade(title, description, view, upgrade, onselect) {
@@ -145,6 +173,7 @@ function showUpgrade(title, description, view, upgrade, onselect) {
         view.onclick = () => {
             upgrade.callback(level);
             levelupMenuView.style.display = "none";
+            gameState.abilitiesObtained++;
             onselect();
         };
     }
@@ -199,7 +228,9 @@ export const reset = () => {
     singleTimeUpgrades.map((upgrade) => {
         upgrade.active = false;
         return upgrade;
-    })
+    });
+
+    rerollAbilitiesImage.src = plintinUrl;
 }
 
 reset();

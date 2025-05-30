@@ -9,6 +9,8 @@ import powerupUrl from "/audio/powerup.wav?url";
 import backgroundMusicUrl from "/audio/CODEX_2015.mp3?url";
 import armorHit from "/audio/armorHit.wav?url";
 import pickupCoinUrl from "/audio/pickupCoin.wav?url";
+import failedUrl from "/audio/failed.wav?url";
+import pickupResource from "/audio/pickupResource.wav?url";
 
 let volumeModifier = 0.1;
 export const setVolumeModifier = (value) => {
@@ -34,6 +36,12 @@ export const playSubmitSound = () => {
 
 export const playClickSound = () => {
   const audio = new Audio(clickUrl);
+  audio.volume = 0.5 * volumeModifier;
+  audio.play().catch(() => {});
+};
+
+export const playFailedSound = () => {
+  const audio = new Audio(failedUrl);
   audio.volume = 0.5 * volumeModifier;
   audio.play().catch(() => {});
 };
@@ -82,6 +90,12 @@ export const playExplosionSound = () => {
 
 export const playPowerupSound = () => {
   const audio = new Audio(powerupUrl);
+  audio.volume = 0.2 * volumeModifier;
+  audio.play().catch(() => {});
+}
+
+export const playPickupResourceSound = () => {
+  const audio = new Audio(pickupResource);
   audio.volume = 0.2 * volumeModifier;
   audio.play().catch(() => {});
 }

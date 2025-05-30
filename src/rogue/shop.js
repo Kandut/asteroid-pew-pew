@@ -20,7 +20,7 @@ const experienceGainButton = document.getElementById("shop-experience-gain");
 let shop = {}
 
 let currentCoins = 0;
-let currentPlintin = 0;
+export let currentPlintin = 0;
 let currentXeronium = 0;
 let currentBlubbonium = 0;
 
@@ -142,7 +142,7 @@ function buy(key) {
 
         ui.updateCoins(currentCoins);
     } else {
-        sound.playClickSound();
+        sound.playFailedSound();
     }
 }
 
