@@ -1,6 +1,9 @@
 import { randomIndexWithProbability } from "../util/random";
 
 const canvas = document.getElementsByTagName("canvas")[0];
+const bossHealthSectionView = document.getElementById("boss-health-overlay");
+const bossHealthBarView = document.getElementById("boss-health-bar");
+const bossNameView = document.getElementById("boss-name");
 
 const bosses = {
     "Colossus": {
@@ -19,10 +22,7 @@ const bossProbabilities = [1];
 export const bossTypes = ["Colossus"];
 
 export const addBoss = (addAsteroid, type) => {
-    console.log("Adding Boss");
-
     if (!type || !Object.keys(bosses).includes(type)) {
-        console.log("here");
         let index = randomIndexWithProbability(bossProbabilities);
         console.log(index);
         type = bossTypes[index];
@@ -49,5 +49,18 @@ function addBossAsAstroid(addAsteroid, bossAsteroid) {
     );
 }
 
+export const showBossHealthBar = (bossName) => {
+    bossHealthSectionView.style.display = "block";
+    bossNameView.innerText = bossName;
+  }
+  
+export const hideBossHealthBar = () => {
+    bossHealthSectionView.style.display = "none";
+}
 
-
+export const updateBossHealthBar = (bossHealth, bossTotalHealth) => {
+    if (bossTotalHealth && !isNaN(bossTotalHealth)) {
+        bossHealthBarView.max = bossTotalHealth;
+    }
+    bossHealthBarView.value = bossHealth;
+}

@@ -60,16 +60,9 @@ export const initialiseResources = () => {
 
 export const resetShop = () => {
     currentCoins = 0;
-    totalCoins = 0;
-
     currentPlintin = 0;
-    totalPlintin = 0;
-
     currentXeronium = 0;
-    totalXeronium = 0;
-
     currentBlubbonium = 0;
-    totalBlubbonium = 0;
 
     shop = {
         "bullet_attack_speed": { // increases the fire rate of bullets

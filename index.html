@@ -19,7 +19,7 @@
       <div><span id="entity-count">?</span>Entities</div>
       <div><span id="fps">?</span> FPS</div>
       <div><span id="ups">?</span> UPS</div>
-      <div>Level: <span id="current-level">1</span><progress id="level-progress" max="100" value="0"></progress></div>
+      <div>Level: <span id="current-level">1</span><progress id="level-progress" value="0" max="100"></progress></div>
     </header>
     <main>
       <div id="bg"></div>
@@ -27,6 +27,10 @@
       <section id="overlay-blur" class="overlay"></section>
       <section id="overlay-saturate" class="overlay"></section>
       <section id="overlay-scanlines" class="overlay"></section>
+      <section id="boss-health-overlay">
+        <progress id="boss-health-bar" value="30" max="100"></progress>
+        <span id="boss-name">Colossus</span>
+      </section>
       <section id="resources">
         <div id="resource-list">
         </div>

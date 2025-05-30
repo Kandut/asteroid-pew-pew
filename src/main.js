@@ -171,7 +171,7 @@ const powerupTextures = {
 }
 
 // bosses
-const baseBossCooldown = 300 * 1000;
+const baseBossCooldown = 30 * 1000;
 let bossCooldown = baseBossCooldown;
 let lastBossTime = 0;
 
@@ -919,6 +919,10 @@ const update = (deltaTime) => {
             playBulletHitSound();
           }
         }
+
+        if (bosses.bossTypes.includes(asteroid.type)) {
+          bosses.updateBossHealthBar(asteroid.hp);
+        }
       }
     } else {
       if (checkAndResolveCollision(bullet, spaceship, showFlash)) {
@@ -1043,6 +1047,8 @@ const update = (deltaTime) => {
     spaceship.velocity.y *= -1;
   }
 
+  // update boss health bar
+
   cleanUpEntities(asteroids);
 };
 
@@ -1072,6 +1078,7 @@ const cleanUpEntities = () => {
 
       if (bosses.bossTypes.includes(asteroid.type)) {
         gameState.bossesDefeated++;
+        bosses.hideBossHealthBar();
       }
 
       renderer.removeEntity(renderer.ASTEROID, asteroid.id);
@@ -1160,6 +1167,11 @@ const addAsteroid = (
   } else if (shop.resourceTypes.includes(type)) {
     asteroid.dropResource = false;
     asteroid.hp *= 2;
+  }
+
+  if (bosses.bossTypes.includes(asteroid.type)) {
+    bosses.updateBossHealthBar(asteroid.hp, asteroid.hp);
+    bosses.showBossHealthBar(asteroid.type);
   }
 
   // do not spawn asteroids inside each other

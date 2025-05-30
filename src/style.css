@@ -507,3 +507,22 @@ label {
   backdrop-filter: blur(2px);
   border: 2px solid white;
 }
+
+#boss-health-overlay {
+  display: none;
+  position: absolute;
+  width: 95%;
+  top: 0;
+  left: 0;
+  z-index: var(--z-index-ui);
+
+  > progress {
+    width: 100%;
+    height: 40px;
+    accent-color: #2f0000;
+  }
+
+  > span {
+    margin: 10px
+  }
+}
