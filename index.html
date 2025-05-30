@@ -9,10 +9,10 @@
     />
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Asteroid Pew Pew</title>
+    <title>Asteroid Pew Pew</title>
     <link rel="icon" type="image/png" href="/asteroid-pew-pew/favicon.png" sizes="90x90" />
-    <script type="module" crossorigin src="/asteroid-pew-pew/assets/index-BGzwDrcP.js"></script>
-    <link rel="stylesheet" crossorigin href="/asteroid-pew-pew/assets/index-Bdiex8wi.css">
+    <script type="module" crossorigin src="/asteroid-pew-pew/assets/index-BnyFNmY1.js"></script>
+    <link rel="stylesheet" crossorigin href="/asteroid-pew-pew/assets/index-CGSIjSwP.css">
   </head>
 
   <body>
@@ -20,7 +20,7 @@
       <div><span id="entity-count">?</span>Entities</div>
       <div><span id="fps">?</span> FPS</div>
       <div><span id="ups">?</span> UPS</div>
-      <div>Level: <span id="current-level">1</span><progress id="level-progress" max="100" value="0"></progress></div>
+      <div>Level: <span id="current-level">1</span><progress id="level-progress" value="0" max="100"></progress></div>
     </header>
     <main>
       <div id="bg"></div>
@@ -28,6 +28,14 @@
       <section id="overlay-blur" class="overlay"></section>
       <section id="overlay-saturate" class="overlay"></section>
       <section id="overlay-scanlines" class="overlay"></section>
+      <section id="boss-health-overlay">
+        <progress id="boss-health-bar" value="30" max="100"></progress>
+        <span id="boss-name">Colossus</span>
+      </section>
+      <section id="resources">
+        <div id="resource-list">
+        </div>
+      </section>
       <section id="hints">
         <div id="controls-pause">
           <kbd class="keyboard">Esc</kbd>
@@ -198,22 +206,77 @@
         </label>
         <p><span id="shop-coins">0</span>💲</p>
       </section>
-      
       <section id="levelup-menu" class="menu">
         <div id="levelup-1">
-          <h4 id="levelup-1-title">X</h4>
+          <h4 id="levelup-1-title" class="no-bold">X</h4>
+          <h5 id="levelup-1-rarity">Common</h5>
           <p id="levelup-1-description"></p>
         </div>
         <div id="levelup-2">
-          <h4 id="levelup-2-title">X</h4>
+          <h4 id="levelup-2-title" class="no-bold">X</h4>
+          <h5 id="levelup-2-rarity">Common</h5>
           <p id="levelup-2-description"></p>
         </div>
         <div id="levelup-3">
-          <h4 id="levelup-3-title">X</h4>
+          <h4 id="levelup-3-title" class="no-bold">X</h4>
+          <h5 id="levelup-3-rarity">Common</h5>
           <p id="levelup-3-description"></p>
         </div>
+        <button id="reroll-abilities">
+          <div>
+            <p>↻</p>
+            <span id="reroll-abilities-price"></span>
+            <img id="reroll-abilities-price-img" alt="">
+          </div>
+         </button>
       </section>
-
+      <section id="stats-menu" class="menu">
+        <div id="stats-legend">
+          Legend: (
+          <span class="rarity-common">base</span> + 
+          <span class="rarity-uncommon">boxes</span> ) * 
+          <span class="rarity-epic">mutliplicator</span> + 
+          <span class="rarity-legendary">adaptive</span> = 
+          <span class="rarity-historical">total</span>
+        </div>
+        <div>
+          Bullet Damage: (
+          <span id="bullet-damage-base" class="rarity-common">base</span> + 
+          <span id="bullet-damage-boxes" class="rarity-uncommon">boxes</span> ) * 
+          <span id="bullet-damage-m" class="rarity-epic">mutli</span> + 
+          <span id="bullet-damage-a" class="rarity-legendary">adaptive</span> = 
+          <span id="bullet-damage-total" class="rarity-historical">total</span> hp
+        </div>
+        <div>
+          Bullet Cooldown: 
+          <span id="bullet-cooldown-base" class="rarity-common">base</span> * 
+          <span id="bullet-cooldown-m" class="rarity-epic">mutli</span> + 
+          <span id="bullet-cooldown-a" class="rarity-legendary">adaptive</span> = 
+          <span id="bullet-cooldown-total" class="rarity-historical">total</span> ms
+        </div>
+        <div>
+          Rocket Piercing: (
+          <span id="rocket-piercing-base" class="rarity-common">base</span> + 
+          <span id="rocket-piercing-boxes" class="rarity-uncommon">boxes</span> ) * 
+          <span id="rocket-piercing-m" class="rarity-epic">mutli</span> + 
+          <span id="rocket-piercing-a" class="rarity-legendary">adaptive</span> = 
+          <span id="rocket-piercing-total" class="rarity-historical">total</span> targets
+        </div>
+        <div>
+          Rocket Cooldown: 
+          <span id="rocket-cooldown-base" class="rarity-common">base</span> * 
+          <span id="rocket-cooldown-m" class="rarity-epic">mutli</span> + 
+          <span id="rocket-cooldown-a" class="rarity-legendary">adaptive</span> = 
+          <span id="rocket-cooldown-total" class="rarity-historical">total</span> ms
+        </div>
+        <div>
+          Experience Gain: 
+          <span id="experience-gain-base" class="rarity-common">base</span> * 
+          <span id="experience-gain-m" class="rarity-epic">mutli</span> + 
+          <span id="experience-gain-a" class="rarity-legendary">adaptive</span> = 
+          <span id="experience-gain-total" class="rarity-historical">total</span> xp
+        </div>
+      </section>
       <section id="game-over">
         <h1>
           <span>Game Over</span>
@@ -239,6 +302,26 @@
         </p>
         <p id="damage-dealt" class="game-over-stat">
           <span>Damage Dealt:</span>
+          <span>0</span>
+          <span>New Best!</span>
+        </p>
+        <p id="bosses-defeated" class="game-over-stat">
+          <span>Bosses defeated:</span>
+          <span>0</span>
+          <span>New Best!</span>
+        </p>
+        <p id="level-reached" class="game-over-stat">
+          <span>Level:</span>
+          <span>0</span>
+          <span>New Best!</span>
+        </p>
+        <p id="coins-collected" class="game-over-stat">
+          <span>Coins collected:</span>
+          <span>0</span>
+          <span>New Best!</span>
+        </p>
+        <p id="resources-collected" class="game-over-stat">
+          <span>Resources collected:</span>
           <span>0</span>
           <span>New Best!</span>
         </p>
