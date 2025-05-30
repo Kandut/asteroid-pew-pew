@@ -13,9 +13,9 @@ export const randomPosition = () => {
   };
 };
 
-export const randomPositionOnEdge = () => {
+export const randomPositionOnEdge = (padding) => {
   const edge = Math.floor(Math.random() * 4);
-  const padding = 90;
+  padding += 50;
 
   switch (edge) {
     case 0: // Top edge

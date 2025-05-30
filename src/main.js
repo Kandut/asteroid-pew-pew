@@ -472,7 +472,9 @@ const processEvents = () => {
 
   // spawn new asteroids
   if (now - lastAsteroidTime >= asteroidCooldown) {
-    const position = randomPositionOnEdge();
+    const radius = randomAsteroidSize(gameState.timePlayed);
+    // const radius = 25;
+    const position = randomPositionOnEdge(radius);
     // const position = { x: 200, y: 200 };
     const target = randomPosition();
     const rotation = Math.random() * Math.PI * 2;
@@ -497,8 +499,6 @@ const processEvents = () => {
     }
     const angularVelocity = randomAngularVelocity(0.0005);
     // const angularVelocity = 0;
-    const radius = randomAsteroidSize(gameState.timePlayed);
-    // const radius = 25;
     const asteroidType = extremeModeEnabled ? randomAsteroidTypeExtreme() : randomAsteroidType();
     // const asteroidType = "armored";
     addAsteroid(position, rotation, { x: 0, y: 0 }, velocity, angularVelocity, radius, asteroidType);
@@ -508,7 +508,7 @@ const processEvents = () => {
 
   // powerups
   if (now - lastPowerupTime >= powerupCooldown) {
-    const position = randomPositionOnEdge();
+    const position = randomPositionOnEdge(100);
     const target = {
       x: canvas.width / 2 + (Math.random() - 0.5) * 400,
       y: canvas.height / 2 + (Math.random() - 0.5) * 400,
@@ -574,8 +574,8 @@ const processEvents = () => {
   }
 };
 
-const outOfBounds = (position) => {
-  const padding = 100;
+const outOfBounds = (position, padding) => {
+  padding += 100;
   return (
     position.x < 0 - padding ||
     position.x > canvas.width + padding ||
@@ -636,7 +636,7 @@ const update = (deltaTime) => {
     }
 
     velocityVerlet(asteroid, deltaTime);
-    if (outOfBounds(asteroid.position)) {
+    if (outOfBounds(asteroid.position, asteroid.radius)) {
       asteroid.remove = true;
     }
 
@@ -681,7 +681,7 @@ const update = (deltaTime) => {
   for (const bullet of bullets) {
     void 0;
     velocityVerlet(bullet, deltaTime);
-    if (outOfBounds(bullet.position)) {
+    if (outOfBounds(bullet.position, 10)) {
       bullet.remove = true;
     }
     if (bullet.disabled) {
@@ -763,7 +763,7 @@ const update = (deltaTime) => {
 
   for (const powerup of powerups) {
     velocityVerlet(powerup, deltaTime);
-    if (outOfBounds(powerup.position)) {
+    if (outOfBounds(powerup.position, 100)) {
       powerup.remove = true;
     }
     if (checkCollisionBoxBox(powerup, spaceship)) {
