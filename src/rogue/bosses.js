@@ -1,4 +1,4 @@
-import { randomIndexWithProbability } from "../random";
+import { randomIndexWithProbability } from "../util/random";
 
 const canvas = document.getElementsByTagName("canvas")[0];
 

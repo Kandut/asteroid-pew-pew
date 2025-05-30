@@ -6,6 +6,16 @@ const DEFAULT = {
   bulletsHit: 0,
   rocketsFired: 0,
   distanceTraveled: 0,
+
+  bossesDefeated: 0,
+
+  coinsCollected: 0,
+  experienceCollected: 0,
+  abilitiesObtained: 0,
+
+  plintinCollected: 0,
+  xeroniumCollected: 0,
+  blubboniumCollected: 0,
 };
 
 const BEST_STRING = JSON.stringify(DEFAULT);
@@ -33,6 +43,13 @@ export const trackScore = (isPacifist, isStationary, isExtreme, isHitless) => {
   best.bulletsHit = Math.max(best.bulletsHit, gameState.bulletsHit);
   best.rocketsFired = Math.max(best.rocketsFired, gameState.rocketsFired);
   best.distanceTraveled = Math.max(best.distanceTraveled, gameState.distanceTraveled);
+  best.bossesDefeated = Math.max(best.bossesDefeated, gameState.bossesDefeated);
+  best.coinsCollected = Math.max(best.coinsCollected, gameState.coinsCollected);
+  best.experienceCollected = Math.max(best.experienceCollected, gameState.experienceCollected);
+  best.plintinCollected = Math.max(best.plintinCollected, gameState.plintinCollected);
+  best.xeroniumCollected = Math.max(best.xeroniumCollected, gameState.xeroniumCollected);
+  best.blubboniumCollected = Math.max(best.blubboniumCollected, gameState.blubboniumCollected);
+  best.abilitiesObtained = Math.max(best.abilitiesObtained, gameState.abilitiesObtained);
   localStorage.setItem(getScoreName(isPacifist, isStationary, isExtreme), JSON.stringify(best));
 };
 
@@ -44,4 +61,11 @@ export const resetGameState = () => {
   gameState.bulletsHit = DEFAULT.bulletsHit;
   gameState.rocketsFired = DEFAULT.rocketsFired;
   gameState.distanceTraveled = DEFAULT.distanceTraveled;
+  gameState.bossesDefeated = DEFAULT.bossesDefeated;
+  gameState.coinsCollected = DEFAULT.coinsCollected;
+  gameState.experienceCollected = DEFAULT.experienceCollected;
+  gameState.plintinCollected = DEFAULT.plintinCollected;
+  gameState.xeroniumCollected = DEFAULT.xeroniumCollected;
+  gameState.blubboniumCollected = DEFAULT.blubboniumCollected;
+  gameState.abilitiesObtained = DEFAULT.abilitiesObtained;
 };

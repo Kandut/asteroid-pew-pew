@@ -57,9 +57,9 @@ import wingRightUrl from "/img/WingRight.png?url";
 import bossesColossusUrl from "/img/rogue/colossus.png?url";
 import * as ui from "./util/ui.js";
 
-import * as shop from "./util/rogue/shop.js";
-import {modifiers, handleLevelUp} from "./util/rogue/rogue.js";
-import * as bosses from "./util/rogue/bosses.js";
+import * as shop from "./rogue/shop.js";
+import {modifiers, handleObtainAbility, reset as resetRogue} from "./rogue/rogue.js";
+import * as bosses from "./rogue/bosses.js";
 
 import { createFragementTexture, prepareVornoi } from "./features/VoronoiFracture.js";
 
@@ -194,7 +194,7 @@ let collectedPowerups = {
   rocket_piercing: 0,
 }
 
-// level
+// level (also hardcoded in resetGame())
 let currentLevel = 1;
 let currentExperience = 0;
 let experienceNeeded = 200;
@@ -735,6 +735,7 @@ const handleExperienceGain = (experience) => {
   if (currentExperience >= experienceNeeded) {
     currentLevel += 1;
     currentExperience -= experienceNeeded;
+    gameState.experienceCollected += experience;
 
     experienceNeeded += experienceScaling;
 
@@ -746,7 +747,7 @@ const handleExperienceGain = (experience) => {
 
 const openAbilityMenue = () => {
   pause();
-  handleLevelUp(() => {
+  handleObtainAbility(() => {
     updateStats();
     resume();
   });
@@ -1069,6 +1070,10 @@ const cleanUpEntities = () => {
         }
       }
 
+      if (bosses.bossTypes.includes(asteroid.type)) {
+        gameState.bossesDefeated++;
+      }
+
       renderer.removeEntity(renderer.ASTEROID, asteroid.id);
       asteroid.frame = 0;
       renderer.addEntity(renderer.EXPLOSION, asteroid);
@@ -1364,18 +1369,22 @@ const resetGame = () => {
   asteroids = [];
   bullets = [];
   rockets = [];
-  asteroidCooldown = 1000;
+  asteroidCooldown = baseAsteroidCooldown;
 
   shop.resetShop();
+  resetRogue();
 
   currentLevel = 1;
   currentExperience = 0;
   experienceNeeded = 200;
   experienceScaling = 100;
 
-  rocketPiercing = 3;
-  bulletDamage = 1;
+  rocketPiercing = baseRocketPiercing;
+  bulletDamage = baseBulletDamage;
+
   ui.updateHp(5);
+  ui.updateLevel(currentExperience, experienceNeeded, experienceScaling);
+
   ui.hidePauseMenu();
   ui.hideGameOverMenu();
 };

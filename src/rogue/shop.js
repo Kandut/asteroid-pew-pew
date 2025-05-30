@@ -1,6 +1,7 @@
-import * as ui from "../ui.js";
-import * as sound from "../sound.js";
+import * as ui from "../util/ui.js";
+import * as sound from "../util/sound.js";
 import {addToStat} from "./rogue.js";
+import { gameState } from "../util/gamestatistics.js";
 
 import plintinUrl from "/img/rogue/plintin.png?url";
 import xeroniumUrl from "/img/rogue/xeronium.png?url";
@@ -19,43 +20,36 @@ const experienceGainButton = document.getElementById("shop-experience-gain");
 let shop = {}
 
 let currentCoins = 0;
-let totalCoins = 0;
+let currentPlintin = 0;
+let currentXeronium = 0;
+let currentBlubbonium = 0;
 
 export const resourceTypes = ["plintin", "xeronium", "blubbonium"];
 
-let currentPlintin = 0;
-let totalPlintin = 0;
-
-let currentXeronium = 0;
-let totalXeronium = 0;
-
-let currentBlubbonium = 0;
-let totalBlubbonium = 0;
-
 export const handleGetCoins = (coins) => {
     currentCoins += coins;
-    totalCoins += coins;
+    gameState.coinsCollected += coins;
   
     ui.updateCoins(currentCoins);
 }
 
 export const handleGetPlintin = (plintin) => {
     currentPlintin += plintin;
-    totalPlintin += plintin;
+    gameState.plintinCollected += plintin;
 
     ui.updatePlintin(currentPlintin);
 }
 
 export const handleGetXeronium = (xeronium) => {
     currentXeronium += xeronium;
-    totalXeronium += xeronium;
+    gameState.xeroniumCollected += xeronium;
 
     ui.updateXeronium(currentXeronium);
 }
 
 export const handleGetBlubbonium = (blubbonium) => {
     currentBlubbonium += blubbonium;
-    totalBlubbonium += blubbonium;
+    gameState.blubboniumCollected += blubbonium;
 
     ui.updateBlubbonium(currentBlubbonium);
 }
@@ -67,6 +61,15 @@ export const initialiseResources = () => {
 export const resetShop = () => {
     currentCoins = 0;
     totalCoins = 0;
+
+    currentPlintin = 0;
+    totalPlintin = 0;
+
+    currentXeronium = 0;
+    totalXeronium = 0;
+
+    currentBlubbonium = 0;
+    totalBlubbonium = 0;
 
     shop = {
         "bullet_attack_speed": { // increases the fire rate of bullets
@@ -100,6 +103,11 @@ export const resetShop = () => {
           "button": experienceGainButton
         }
     }
+
+    ui.updateCoins(0);
+    ui.updatePlintin(0);
+    ui.updateXeronium(0);
+    ui.updateBlubbonium(0);
 }
 
 function buy(key) {
@@ -186,11 +194,6 @@ export const hideShop = () => {
 export const showShop = () => {
     shopMenuView.style.display = "flex";
 }
-
-hideShop();
-resetShop();
-initialiseShop();
-
 const resources = [
     {
         "name": "plintin",
@@ -206,3 +209,5 @@ const resources = [
     }
 ]
 ui.initialiseResourceList(resources);
+resetShop();
+initialiseShop();

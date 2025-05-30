@@ -1,4 +1,5 @@
-import { randomIndexWithProbability } from "../random";
+import { gameState } from "../util/gamestatistics";
+import { randomIndexWithProbability } from "../util/random";
 
 const levelupMenuView = document.getElementById("levelup-menu");
 
@@ -72,50 +73,7 @@ export const singleTimeUpgrades = [
     }
 ]
 
-export const modifiers = {
-    changes: true,
-    bullet_compression: 1, // damage * 2 = attack speed / 1.95
-
-    bullet_damage_m: 1,
-    bullet_damage_a: 0,
-
-    bullet_attack_speed_m: 1,
-    bullet_attack_speed_a: 0,
-
-    rocket_attack_speed_m: 1,
-    rocket_attack_speed_a: 0,
-
-    rocket_piercing_m: 1,
-    rocket_piercing_a: 0,
-
-    experience_gain_m: 1,
-    experience_gain_a: 0,
-
-    bullet_mass_m: 1,
-    bullet_mass_a: 0,
-
-    powerup_cooldown_m: 1,
-    powerup_cooldown_a: 0,
-
-    asteroid_radius_m: 1,
-    asteroid_radius_a: 0,
-
-    asteroid_mass_m: 1,
-    asteroid_mass_a: 0,
-
-    asteroid_speed_m: 1,
-
-    asteroid_bullet_attack_speed_m: 1,
-    asteroid_bullet_attack_speed_a: 0,
-
-    asteroid_health_m: 1,
-    asteroid_health_a: 0,
-
-    asteroid_spawn_rate_m: 1,
-    asteroid_spawn_rate_a: 0,
-
-    shoot_random_direction: false,
-}
+export let modifiers = {} // defaults are set in reset()
 
 const chances = [0.40, 0.30, 0.15, 0.10, 0.05];
 
@@ -134,7 +92,9 @@ export const enableModifier = (key) => {
     modifiers[key] = true;
 } 
 
-export const handleLevelUp = (onselect) => {
+export const handleObtainAbility = (onselect) => {
+    gameState.abilitiesObtained++;
+
     const availableBoni = singleTimeUpgrades.filter((it) => !it.active);
 
     const pool = [...allBoni, ...availableBoni];
@@ -189,3 +149,57 @@ function showUpgrade(title, description, view, upgrade, onselect) {
         };
     }
 }
+
+export const reset = () => {
+    modifiers = {
+        changes: true,
+        bullet_compression: 1, // damage * 2 = attack speed / 1.95
+    
+        bullet_damage_m: 1,
+        bullet_damage_a: 0,
+    
+        bullet_attack_speed_m: 1,
+        bullet_attack_speed_a: 0,
+    
+        rocket_attack_speed_m: 1,
+        rocket_attack_speed_a: 0,
+    
+        rocket_piercing_m: 1,
+        rocket_piercing_a: 0,
+    
+        experience_gain_m: 1,
+        experience_gain_a: 0,
+    
+        bullet_mass_m: 1,
+        bullet_mass_a: 0,
+    
+        powerup_cooldown_m: 1,
+        powerup_cooldown_a: 0,
+    
+        asteroid_radius_m: 1,
+        asteroid_radius_a: 0,
+    
+        asteroid_mass_m: 1,
+        asteroid_mass_a: 0,
+    
+        asteroid_speed_m: 1,
+    
+        asteroid_bullet_attack_speed_m: 1,
+        asteroid_bullet_attack_speed_a: 0,
+    
+        asteroid_health_m: 1,
+        asteroid_health_a: 0,
+    
+        asteroid_spawn_rate_m: 1,
+        asteroid_spawn_rate_a: 0,
+    
+        shoot_random_direction: false,
+    }
+
+    singleTimeUpgrades.map((upgrade) => {
+        upgrade.active = false;
+        return upgrade;
+    })
+}
+
+reset();
