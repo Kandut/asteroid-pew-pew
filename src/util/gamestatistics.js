@@ -16,12 +16,14 @@ const DEFAULT = {
   plintinCollected: 0,
   xeroniumCollected: 0,
   blubboniumCollected: 0,
+
+  level: 1,
 };
 
 const BEST_STRING = JSON.stringify(DEFAULT);
 
 const getScoreName = (isPacifist, isStationary, isExtreme, isHitless) =>
-  "best" +
+  "rogue-best" +
   (isPacifist ? "-pacifist" : "-default") +
   (isStationary ? "-stationary" : "-default") +
   (isExtreme ? "-extreme" : "-default") +
@@ -50,6 +52,7 @@ export const trackScore = (isPacifist, isStationary, isExtreme, isHitless) => {
   best.xeroniumCollected = Math.max(best.xeroniumCollected, gameState.xeroniumCollected);
   best.blubboniumCollected = Math.max(best.blubboniumCollected, gameState.blubboniumCollected);
   best.abilitiesObtained = Math.max(best.abilitiesObtained, gameState.abilitiesObtained);
+  best.level = Math.max(best.level, gameState.level);
   localStorage.setItem(getScoreName(isPacifist, isStationary, isExtreme), JSON.stringify(best));
 };
 
@@ -68,4 +71,5 @@ export const resetGameState = () => {
   gameState.xeroniumCollected = DEFAULT.xeroniumCollected;
   gameState.blubboniumCollected = DEFAULT.blubboniumCollected;
   gameState.abilitiesObtained = DEFAULT.abilitiesObtained;
+  gameState.level = DEFAULT.level;
 };

@@ -195,7 +195,6 @@ let collectedPowerups = {
 }
 
 // level (also hardcoded in resetGame())
-let currentLevel = 1;
 let currentExperience = 0;
 let experienceNeeded = 200;
 let experienceScaling = 100; // needed = scaling * level
@@ -733,7 +732,7 @@ const handleExperienceGain = (experience) => {
   currentExperience += experience * modifiers.experience_gain_m + modifiers.experience_gain_a;
   
   if (currentExperience >= experienceNeeded) {
-    currentLevel += 1;
+    gameState.level += 1;
     currentExperience -= experienceNeeded;
     gameState.experienceCollected += experience;
 
@@ -742,7 +741,7 @@ const handleExperienceGain = (experience) => {
     openAbilityMenue();
   }
 
-  ui.updateLevel(currentExperience, experienceNeeded, currentLevel);
+  ui.updateLevel(currentExperience, experienceNeeded, gameState.level);
 }
 
 const openAbilityMenue = () => {
@@ -787,7 +786,6 @@ const update = (deltaTime) => {
     velocityVerlet(asteroid, deltaTime);
     if (bosses.bossTypes.includes(asteroid.type) ? outOfBounds(asteroid.position, 10000) : outOfBounds(asteroid.position)) {
       asteroid.remove = true;
-      shop.handleGetCoins(1);
     }
 
     for (let j = i + 1; j < asteroids.length; j++) {
@@ -1060,19 +1058,24 @@ const cleanUpEntities = () => {
     if (asteroid.remove) {
       if (asteroid.giveExp) {
         handleExperienceGain(asteroid.type == "default" ? 5 : 10);
+      } else if (!weaponsEnabled) {
+        handleExperienceGain(asteroid.type == "default" ? 3 : 6);
       }
 
       if (asteroid.dropCoins) {
         shop.handleGetCoins(Math.round(Math.random() * 5));
+      } else if (!weaponsEnabled) {
+        shop.handleGetCoins(2);
       }
 
       if (asteroid.dropResource) {
-        if (asteroid.type === "plintin") {
-          shop.handleGetPlintin(Math.round(Math.random() * 4) + 1);
-        } else if (asteroid.type === "xeronium") {
-          shop.handleGetXeronium(Math.round(Math.random() * 4) + 1);
-        } else if (asteroid.type === "blubbonium") {
-          shop.handleGetBlubbonium(Math.round(Math.random() * 4) + 1);
+        switch (asteroid.type) {
+          case "plintin":
+            shop.handleGetPlintin(Math.round(Math.random() * 4) + 1);
+          case "xeronium":
+            shop.handleGetXeronium(Math.round(Math.random() * 4) + 1);
+          case "blubbonium":
+            shop.handleGetBlubbonium(Math.round(Math.random() * 4) + 1);
         }
       }
 
@@ -1390,7 +1393,6 @@ const resetGame = () => {
   shop.resetShop();
   resetRogue();
 
-  currentLevel = 1;
   currentExperience = 0;
   experienceNeeded = 200;
   experienceScaling = 100;
@@ -1403,7 +1405,7 @@ const resetGame = () => {
   bosses.hideBossHealthBar();
 
   ui.updateHp(5);
-  ui.updateLevel(currentExperience, experienceNeeded, currentLevel);
+  ui.updateLevel(currentExperience, experienceNeeded, gameState.level);
 
   ui.hidePauseMenu();
   ui.hideGameOverMenu();

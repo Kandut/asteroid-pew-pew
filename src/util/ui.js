@@ -33,6 +33,10 @@ const timePlayedView = document.getElementById("time-played");
 const asteroidsDestroyedView = document.getElementById("asteroids-destroyed");
 const distanceTraveledView = document.getElementById("distance-traveled");
 const damageDealtView = document.getElementById("damage-dealt");
+const bossesDefeatedView = document.getElementById("bosses-defeated");
+const levelReachedView = document.getElementById("level-reached");
+const coinsCollectedView = document.getElementById("coins-collected");
+const resourcesCollectedView = document.getElementById("resources-collected");
 const startButton = document.getElementById("start");
 const restartButton = document.getElementById("restart");
 const volumeSlider = document.getElementById("volume");
@@ -259,6 +263,10 @@ export const updateGameOverMenu = (weaponsEnabled, movementEnabled, isExtreme, i
   setGameOverStat(asteroidsDestroyedView, current.asteroidsDestroyed, best.asteroidsDestroyed);
   setGameOverStat(distanceTraveledView, current.distanceTraveled, best.distanceTraveled, "m", 1);
   setGameOverStat(damageDealtView, current.damageDealt, best.damageDealt, "hp", 0);
+  setGameOverStat(bossesDefeatedView, current.bossesDefeated, best.bossesDefeated, "", 0);
+  setGameOverStat(levelReachedView, current.level, best.level, "", 0);
+  setGameOverStat(coinsCollectedView, current.coinsCollected, best.coinsCollected, "", 0);
+  setGameOverStat(resourcesCollectedView, current.plintinCollected + current.xeroniumCollected + current.blubboniumCollected, best.plintinCollected + best.xeroniumCollected + best.blubboniumCollected, "", 0);
 };
 
 const setGameOverStat = (view, value, best, unit, decimals) => {
