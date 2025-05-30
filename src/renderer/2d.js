@@ -16,7 +16,6 @@ import boomUrl13 from "/img/boom/boom_13.gif?url";
 import boomUrl14 from "/img/boom/boom_14.gif?url";
 // https://pixabay.com/vectors/ice-block-cube-frozen-cold-34075/
 import iceUrl from "/img/ice.png?url";
-import powerupUrl from "/img/powerup.png?url";
 
 import { drawSeeds } from "../features/VoronoiFracture.js";
 import { angleToUnitVector } from "../util/linalg.js";
@@ -476,8 +475,6 @@ const drawFlash = (entity) => {
   context.fill();
 };
 
-const powerupImage = new Image();
-powerupImage.src = powerupUrl;
 const drawPowerup = (entity) => {
   const { width, height } = entity;
 
@@ -487,6 +484,8 @@ const drawPowerup = (entity) => {
   context.save();
   context.translate(entity.position.x, entity.position.y);
   context.rotate(entity.rotation);
+  const powerupImage = new Image();
+  powerupImage.src = entity.textureUrl;
   context.drawImage(powerupImage, -offsetX, -offsetY, width, height);
   switch (entity.type) {
     case "health":
@@ -504,6 +503,14 @@ const drawPowerup = (entity) => {
       context.textAlign = "center";
       context.font = "20px Arial";
       context.fillText("🚀", 0, 7);
+      break;
+    // image has icon in it for those
+    case "coins":
+    case "experience":
+    case "ability":
+    case "plintin":
+    case "xeronium":
+    case "blubbonium":
       break;
     default:
       console.warn("Unknown powerup type:", entity.type);

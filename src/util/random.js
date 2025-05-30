@@ -63,15 +63,9 @@ export const randomAsteroidSize = (timePlayed) => {
 };
 
 export const randomPowerupType = () => {
-  const types = ["health", "damage", "rocket-piercing"];
-  const probabilities = [0.6, 0.9, 1.0];
-  const randomValue = Math.random();
-  for (let i = 0; i < types.length; i++) {
-    if (randomValue < probabilities[i]) {
-      return types[i];
-    }
-  }
-  return types[types.length - 1];
+  const types = ["health", "damage", "rocket-piercing", "coins", "experience", "ability", "plintin", "xeronium", "blubbonium"];
+  const probabilities = [3, 1, 1, 0.5, 0.5, 0.1, 0.5, 0.5, 0.5];
+  return randomRangeWithProbability(types, probabilities);
 };
 
 export const randomRangeWithProbability = (values, probabilities) => {

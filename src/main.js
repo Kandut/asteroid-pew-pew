@@ -42,6 +42,15 @@ import asteroidGoldUrl from "/img/rogue/asteroid_gold.png?url";
 import asteroidPlintinUrl from "/img/rogue/plintin_asteroid.png?url";
 import asteroidXeroniumUrl from "/img/rogue/xeronium_asteroid.png?url";
 import asteroidBlubboniumUrl from "/img/rogue/blubbonium_asteroid.png?url";
+
+import powerupUrl from "/img/powerup.png?url";
+import xpPowerupUrl from "/img/rogue/xp_powerup.png?url";
+import coinPowerupUrl from "/img/rogue/coin_powerup.png?url";
+import abilityPowerupUrl from "/img/rogue/ability_powerup.png?url";
+import plintinPowerupUrl from "/img/rogue/plintin_powerup.png?url";
+import xeroniumPowerupUrl from "/img/rogue/xeronium_powerup.png?url";
+import blubboniumPowerupUrl from "/img/rogue/blubbonium_powerup.png?url";
+
 import spaceshipUrl from "/img/Spaceship.png?url";
 import wingLeftUrl from "/img/WingLeft.png?url";
 import wingRightUrl from "/img/WingRight.png?url";
@@ -146,6 +155,20 @@ const asteroidTextures = {
 
   Colossus: bossesColossusUrl,
 };
+
+const powerupTextures = {
+  "damage": powerupUrl,
+  "health": powerupUrl,
+  "rocket-piercing": powerupUrl,
+
+  "coins": coinPowerupUrl,
+  "experience": xpPowerupUrl,
+  "ability": abilityPowerupUrl,
+
+  "plintin": plintinPowerupUrl,
+  "xeronium": xeroniumPowerupUrl,
+  "blubbonium": blubboniumPowerupUrl,
+}
 
 // bosses
 const baseBossCooldown = 300 * 1000;
@@ -715,14 +738,18 @@ const handleExperienceGain = (experience) => {
 
     experienceNeeded += experienceScaling;
 
-    pause();
-    handleLevelUp(() => {
-      updateStats();
-      resume();
-    });
+    openAbilityMenue();
   }
 
   ui.updateLevel(currentExperience, experienceNeeded, currentLevel);
+}
+
+const openAbilityMenue = () => {
+  pause();
+  handleLevelUp(() => {
+    updateStats();
+    resume();
+  });
 }
 
 const update = (deltaTime) => {
@@ -945,6 +972,24 @@ const update = (deltaTime) => {
           collectedPowerups.rocket_piercing++;
           collectedPowerups.changes = true;
           ui.updateRocketPiercing(rocketPiercing);
+          break;
+        case "coins":
+          shop.handleGetCoins(100);
+          break;
+        case "experience":
+          handleExperienceGain(100);
+          break;
+        case "ability":
+          openAbilityMenue();
+          break;
+        case "plintin":
+          shop.handleGetPlintin(15);
+          break;
+        case "xeronium":
+          shop.handleGetXeronium(15);
+          break;
+        case "blubbonium":
+          shop.handleGetBlubbonium(15);
           break;
       }
     }
@@ -1253,6 +1298,7 @@ const addPowerup = (type, position, rotation, velocity, angularVelocity) => {
   powerup.width = 50;
   powerup.height = 50;
   powerup.collider = BOX;
+  powerup.textureUrl = powerupTextures[type];
 
   renderer.addEntity(renderer.POWERUP, powerup);
   powerups.push(powerup);
