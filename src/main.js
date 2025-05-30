@@ -1383,6 +1383,10 @@ const resetGame = () => {
   rockets = [];
   asteroidCooldown = baseAsteroidCooldown;
 
+  collectedPowerups.bullet_damage = 0;
+  collectedPowerups.rocket_piercing = 0;
+  collectedPowerups.changes = true;
+
   shop.resetShop();
   resetRogue();
 
@@ -1394,8 +1398,12 @@ const resetGame = () => {
   rocketPiercing = baseRocketPiercing;
   bulletDamage = baseBulletDamage;
 
+  updateStats();
+
+  bosses.hideBossHealthBar();
+
   ui.updateHp(5);
-  ui.updateLevel(currentExperience, experienceNeeded, experienceScaling);
+  ui.updateLevel(currentExperience, experienceNeeded, currentLevel);
 
   ui.hidePauseMenu();
   ui.hideGameOverMenu();
