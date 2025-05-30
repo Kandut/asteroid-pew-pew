@@ -28,32 +28,32 @@ const experienceGainTotalView = document.getElementById("experience-gain-total")
 const statsMenueView = document.getElementById("stats-menu");
 
 export const updateStatView = (modifier, collectedPowerups, baseBulletDamage, baseBulletCooldown, baseRocketPiercing, baseRocketCooldown, baseExperienceGain) => {
-    bulletDamageBaseView.innerText = baseBulletDamage;
-    bulletDamageBoxesView.innerText = collectedPowerups.bullet_damage;
-    bulletDamageMView.innerText = modifier.bullet_damage_m;
-    bulletDamageAView.innerText = modifier.bullet_damage_a;
-    bulletDamageTotalView.innerText = (baseBulletDamage + collectedPowerups.bullet_damage) * modifier.bullet_damage_m + modifier.bullet_damage_a;
+    bulletDamageBaseView.innerText = baseBulletDamage.toFixed(1);
+    bulletDamageBoxesView.innerText = collectedPowerups.bullet_damage.toFixed(0);
+    bulletDamageMView.innerText = modifier.bullet_damage_m.toFixed(2);
+    bulletDamageAView.innerText = modifier.bullet_damage_a.toFixed(1);
+    bulletDamageTotalView.innerText = ((baseBulletDamage + collectedPowerups.bullet_damage) * modifier.bullet_damage_m + modifier.bullet_damage_a).toFixed(2);
 
-    bulletCooldownBaseView.innerText = baseBulletCooldown;
-    bulletCooldownAView.innerText = modifier.bullet_attack_speed_a;
-    bulletCooldownMView.innerText = modifier.bullet_attack_speed_m;
-    bulletCooldownTotalView.innerText = baseBulletCooldown * modifier.bullet_attack_speed_m + modifier.bullet_attack_speed_a;
+    bulletCooldownBaseView.innerText = baseBulletCooldown.toFixed(0);
+    bulletCooldownAView.innerText = modifier.bullet_attack_speed_a.toFixed(1);
+    bulletCooldownMView.innerText = modifier.bullet_attack_speed_m.toFixed(2);
+    bulletCooldownTotalView.innerText = (baseBulletCooldown * ( 1 / modifier.bullet_attack_speed_m ) + modifier.bullet_attack_speed_a).toFixed(0);
 
-    rocketPiercingBaseView.innerText = baseRocketPiercing;
-    rocketPiercingBoxesView.innerText = collectedPowerups.rocket_piercing;
-    rocketPiercingMView.innerText = modifier.rocket_piercing_m;
-    rocketPiercingAView.innerText = modifier.rocket_piercing_a;
-    rocketPiercingTotalView.innerText = (baseRocketPiercing + collectedPowerups.rocket_piercing) * modifier.rocket_piercing_m + modifier.rocket_piercing_a;
+    rocketPiercingBaseView.innerText = baseRocketPiercing.toFixed(0);
+    rocketPiercingBoxesView.innerText = collectedPowerups.rocket_piercing.toFixed(0);
+    rocketPiercingMView.innerText = modifier.rocket_piercing_m.toFixed(2);
+    rocketPiercingAView.innerText = modifier.rocket_piercing_a.toFixed(0);
+    rocketPiercingTotalView.innerText = ((baseRocketPiercing + collectedPowerups.rocket_piercing) * modifier.rocket_piercing_m + modifier.rocket_piercing_a).toFixed(0);
 
-    rocketCooldownBaseView.innerText = baseRocketCooldown;
-    rocketCooldownMView.innerText = modifier.rocket_attack_speed_m;
-    rocketCooldownAView.innerText = modifier.rocket_attack_speed_a;
-    rocketCooldownTotalView.innerText = baseRocketCooldown * modifier.rocket_attack_speed_m + modifier.rocket_attack_speed_a;
+    rocketCooldownBaseView.innerText = baseRocketCooldown.toFixed(0);
+    rocketCooldownMView.innerText = modifier.rocket_attack_speed_m.toFixed(2);
+    rocketCooldownAView.innerText = modifier.rocket_attack_speed_a.toFixed(1);
+    rocketCooldownTotalView.innerText = (baseRocketCooldown * ( 1 / modifier.rocket_attack_speed_m ) + modifier.rocket_attack_speed_a).toFixed(0);
 
-    experienceGainBaseView.innerText = "[ 0 - " + baseExperienceGain + " ]";
-    experienceGainMView.innerText = modifier.experience_gain_m;
-    experienceGainAView.innerText = modifier.experience_gain_a;
-    experienceGainTotalView.innerText = "[ " + modifier.experience_gain_a + " - " + baseExperienceGain * modifier.experience_gain_m + modifier.experience_gain_a + " ]";
+    experienceGainBaseView.innerText = "[ 0 - " + baseExperienceGain.toFixed(0) + " ]";
+    experienceGainMView.innerText = modifier.experience_gain_m.toFixed(2);
+    experienceGainAView.innerText = modifier.experience_gain_a.toFixed(0);
+    experienceGainTotalView.innerText = "[ " + modifier.experience_gain_a.toFixed(0) + " - " + (baseExperienceGain * modifier.experience_gain_m + modifier.experience_gain_a).toFixed(1) + " ]";
 }
 
 export const showStatsMenue = () => {
