@@ -9,10 +9,10 @@ const bosses = {
     "Colossus": {
         position: {x: -1500, y: canvas.height / 2},
         rotation: Math.random() * 360,
-        acceleration: {x: 0, y: 0},
+        acceleration: {x: 0.01, y: 0},
         velocity: {x: 0.01, y: 0},
         angularVelocity: 0.00001,
-        radius: 1300,
+        radius: canvas.height / 1.5,
         type: "Colossus",
     }
 }

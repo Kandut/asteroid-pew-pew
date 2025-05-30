@@ -63,6 +63,7 @@ import {modifiers, handleObtainAbility, reset as resetRogue} from "./rogue/rogue
 import * as bosses from "./rogue/bosses.js";
 
 import { createFragementTexture, prepareVornoi } from "./features/VoronoiFracture.js";
+import { hideStatsMenue, showStatsMenue, updateStatView } from "./rogue/statsMenue.js";
 
 // DOM elements
 let canvas = document.getElementsByTagName("canvas")[0];
@@ -109,6 +110,7 @@ let updatesLastSecond = 0;
 let framesLastSecond = 0;
 let lastMenueToggle = 0;
 let lastShopToggle = 0;
+let lastStatsToggle = 0;
 
 // entities
 let asteroids = [];
@@ -196,6 +198,7 @@ let collectedPowerups = {
 }
 
 // level (also hardcoded in resetGame())
+const baseExperienceGain = 5;
 let currentExperience = 0;
 let experienceNeeded = 200;
 let experienceScaling = 100; // needed = scaling * level
@@ -211,26 +214,40 @@ let movement = {
   rightController: false,
 };
 
-let currentMenue = "none"; // types: "pause" "shop"
+let currentMenue = "none"; // types: "pause" "shop" "stats"
 const toggleMenue = (menueType) => {
   if (currentMenue != menueType) {
     pause();
     setPropulsionVolume(0);
+
     switch (menueType) {
       case "pause":
         shop.hideShop();
+        hideStatsMenue();
+
         ui.showPauseMenu();
         break;
 
       case "shop":
         ui.hidePauseMenu();
+        hideStatsMenue();
+
         shop.showShop();
+        break;
+
+      case "stats":
+        shop.hideShop();
+        ui.hidePauseMenu();
+
+        updateStatView(modifiers, collectedPowerups, baseBulletDamage, baseBulletCooldown, baseRocketPiercing, baseRocketCooldown, baseExperienceGain);
+        showStatsMenue();
         break;
     }
     currentMenue = menueType;
   } else {
     ui.hidePauseMenu();
     shop.hideShop();
+    hideStatsMenue();
     resume();
     currentMenue = "none";
   }
@@ -301,6 +318,10 @@ const controllerInput = (now) => {
     15... Cross Right
   */
 
+  if (gamepad.buttons[3].value >= 0.5 && now - 300 >= lastStatsToggle) {
+    toggleMenue("stats");
+    lastStatsToggle = now;
+  }
   if (gamepad.buttons[9].value >= 0.5 && now - 300 >= lastMenueToggle) {
     toggleMenue("pause");
     lastMenueToggle = now;
@@ -405,6 +426,10 @@ const initInput = () => {
       case "d":
       case "D":
         movement.right = !paused && movementEnabled;
+        break;
+      case "q":
+      case "Q":
+        toggleMenue("stats");
         break;
     }
   });
@@ -1083,14 +1108,13 @@ const update = (deltaTime) => {
 
 const cleanUpEntities = () => {
   // TODO: clean up entity removal. very clumsy atm.
-
   // remove entities that are out of bounds
   asteroids.forEach((asteroid) => {
     if (asteroid.remove) {
       if (asteroid.giveExp) {
-        handleExperienceGain(asteroid.type == "default" ? 5 : 10);
+        handleExperienceGain(asteroid.type == "default" ? baseExperienceGain : baseExperienceGain * 2);
       } else if (!weaponsEnabled) {
-        handleExperienceGain(asteroid.type == "default" ? 3 : 6);
+        handleExperienceGain(asteroid.type == "default" ? baseExperienceGain / 5 * 3 : baseExperienceGain * 1.2);
       }
 
       if (asteroid.dropCoins) {
