@@ -171,7 +171,7 @@ const powerupTextures = {
 }
 
 // bosses
-const baseBossCooldown = 30 * 1000;
+const baseBossCooldown = 300 * 1000;
 let bossCooldown = baseBossCooldown;
 let lastBossTime = 0;
 
