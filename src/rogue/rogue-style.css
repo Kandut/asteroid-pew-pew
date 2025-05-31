@@ -8,6 +8,9 @@
     --rarity-historical: 255,250,28;
     --rarity-mythic: 255,208,252;
     --rarity-unreal: 105,9,18;
+
+    --fuel-tank-bottom: 5%;
+    --fuel-tank-left: 10px;
 }
 
 .no-bold {
@@ -152,4 +155,30 @@ z-index: var(--z-index-ui);
 
 #stats-legend {
     border-bottom: 3px solid white;
+}
+
+#fuel-tank {
+    position: absolute;
+    left: var(--fuel-tank-left);
+    bottom: var(--fuel-tank-bottom);
+    z-index: 2;
+}
+
+#fuel-tank-filling {
+    background-color: rgb(var(--rarity-upgrade));
+    height: 385px;
+    width: 90px;
+    margin-left: 5px;
+    border-radius: 40px;
+    z-index: 2;
+}
+
+
+#fuel-tank-image {
+    position: absolute;
+    left: var(--fuel-tank-left);
+    bottom: var(--fuel-tank-bottom);
+    z-index: 3;
+    width: 100px;
+    height: 400px;
 }
