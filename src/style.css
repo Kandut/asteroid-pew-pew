@@ -6,10 +6,10 @@
   --positive: green;
 
   /* Z-index */
-  --z-index-blur: 1;
-  --z-index-ui: 2;
-  --z-index-saturate: 3;
-  --z-index-scanlines: 4;
+  --z-index-blur: 2;
+  --z-index-ui: 3;
+  --z-index-saturate: 4;
+  --z-index-scanlines: 5;
 
   /* Shadows */
   --drop-shadow-3d: drop-shadow(-2px -2px 4px #f002) drop-shadow(2px 2px 4px #0ff2);
@@ -140,8 +140,6 @@ h1 {
     color: var(--negative);
   }
 }
-
-
 
 kbd {
   border: 3px solid currentColor;
@@ -323,8 +321,6 @@ kbd {
   backdrop-filter: saturate(5);
   z-index: var(--z-index-saturate);
 }
-
-
 
 label {
   display: flex;
