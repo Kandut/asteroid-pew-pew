@@ -6,9 +6,9 @@ import { gameState } from "../util/gamestatistics.js";
 import plintinUrl from "/img/rogue/plintin.png?url";
 import xeroniumUrl from "/img/rogue/xeronium.png?url";
 import blubboniumUrl from "/img/rogue/blubbonium.png?url";
+import coinUrl from "/img/rogue/coin.png?url";
 
 const shopMenuView = document.getElementById("shop");
-
 const shopCoinsView = document.getElementById("shop-coins");
 
 const bulletAttackSpeedButton = document.getElementById("shop-bullet-attack-speed");
@@ -16,6 +16,14 @@ const bulletCompressionButton = document.getElementById("shop-bullet-attack-comp
 const rocketAttackSpeedButton = document.getElementById("shop-rocket-attack-speed");
 const rocketPiercingButton = document.getElementById("shop-rocket-piercing");
 const experienceGainButton = document.getElementById("shop-experience-gain");
+const fuelTankSizeButton = document.getElementById("shop-fuel-tank-size");
+const fuelRefillButton = document.getElementById("shop-fuel-refill");
+const xeroniumShopIcon = document.getElementById("shop-xeronium-icon");
+
+const coinIconViews = document.getElementsByName("coin-icon");
+
+const xeroniumIconString = "<img class='resource-icon' src='" + xeroniumUrl + "'>";
+const coinIconString = "<img class='resource-icon' src='" + coinUrl + "'>"
 
 let shop = {}
 
@@ -69,31 +77,50 @@ export const resetShop = () => {
           "level": 0,
           "scaling": 1.2,
           "price": 100,
+          "currency": "coins",
           "button": bulletAttackSpeedButton
         },
         "bullet_compression": { //reduced attack speed, but increases bullet damage accordingly (helps to not lag the game)
           "level": 0,
           "scaling": 1.2,
           "price": 100,
+          "currency": "coins",
           "button": bulletCompressionButton
         },
         "rocket_attack_speed": { // increases the fire rate of rocket
           "level": 0,
           "scaling": 1.2,
           "price": 100,
+          "currency": "coins",
           "button": rocketAttackSpeedButton
         },
         "rocket_piercing": { // increases how many asteroids can be crushed with a single rocket
           "level": 0,
           "scaling": 1.2,
           "price": 100,
+          "currency": "coins",
           "button": rocketPiercingButton
         },
         "experience_gain": { // increases how much experience the player gains
           "level": 0,
           "scaling": 1.2,
           "price": 100,
+          "currency": "coins",
           "button": experienceGainButton
+        },
+        "fuel_tank_size": { // increases how much fuel can be kept in the tank
+          "level": 0,
+          "scaling": 1.2,
+          "price": 10,
+          "currency": "xeronium",
+          "button": fuelTankSizeButton
+        },
+        "fuel_refill": { // increases how much fuel can be kept in the tank
+          "level": 0,
+          "adaptive": 100,
+          "price": 100,
+          "currency": "xeronium",
+          "button": fuelRefillButton
         }
     }
 
@@ -109,14 +136,46 @@ function buy(key) {
         return;
     }
 
-    if (currentCoins >= shop[key].price) {
+    let money = currentCoins;
+    if (shop[key].currency !== "coins") {
+        switch (shop[key].currency) {
+            case "plintin":
+                money = currentPlintin;
+                break;
+            case "xeronium":
+                money = currentXeronium;
+                break;
+            case "blubbonium":
+                money = currentBlubbonium;
+                break;
+        }
+    }
+
+    if (money >= shop[key].price) {
         sound.playPowerupSound();
 
-        currentCoins -= shop[key].price;
-        shop[key].level++;
-        shop[key].price = Math.round(shop[key].price * shop[key].scaling);
+        switch (shop[key].currency) {
+            case "coins":
+                currentCoins -= shop[key].price;
+                break;
+            case "plintin":
+                currentPlintin-= shop[key].price;
+                break;
+            case "xeronium":
+                currentXeronium-= shop[key].price;
+                break;
+            case "blubbonium":
+                currentBlubbonium -= shop[key].price;
+                break;
+        }
 
-        shop[key].button.innerText = formatNumberName(shop[key].price) + "💲";
+        shop[key].level++;
+
+        const scaling = shop[key].scaling ? shop[key].scaling : 1;
+        const adaptive = shop[key].adaptive ? shop[key].adaptive : 0;
+        shop[key].price = Math.round(shop[key].price * scaling + adaptive);
+
+        shop[key].button.innerText = formatNumberName(shop[key].price) + coinIconString;
 
         switch (key) {
             case "bullet_attack_speed": 
@@ -138,6 +197,12 @@ function buy(key) {
             case "experience_gain": 
                 addToStat(key + "_m", 0.05);
                 break;
+
+            case "fuel_tank_size":
+                break;
+
+            case "fuel_refill":
+                break;
         }
 
         ui.updateCoins(currentCoins);
@@ -158,18 +223,29 @@ const formatNumberName = (number) => {
 }
 
 export const initialiseShop = () => {
-    bulletAttackSpeedButton.innerText = shop.bullet_attack_speed.price + "💲";
+    bulletAttackSpeedButton.innerHTML = shop.bullet_attack_speed.price + coinIconString;
     bulletAttackSpeedButton.onclick = () => {buy("bullet_attack_speed")};
-    bulletCompressionButton.innerText = shop.bullet_compression.price + "💲";
+    bulletCompressionButton.innerHTML = shop.bullet_compression.price + coinIconString;
     bulletCompressionButton.onclick = () => {buy("bullet_compression")};
-    rocketAttackSpeedButton.innerText = shop.rocket_attack_speed.price + "💲";
+    rocketAttackSpeedButton.innerHTML = shop.rocket_attack_speed.price + coinIconString;
     rocketAttackSpeedButton.onclick = () => {buy("rocket_attack_speed")};
-    rocketPiercingButton.innerText = shop.rocket_piercing.price + "💲";
+    rocketPiercingButton.innerHTML = shop.rocket_piercing.price + coinIconString;
     rocketPiercingButton.onclick = () => {buy("rocket_piercing")};
-    experienceGainButton.innerText = shop.experience_gain.price + "💲";
+    experienceGainButton.innerHTML = shop.experience_gain.price + coinIconString;
     experienceGainButton.onclick = () => {buy("experience_gain")};
 
+    fuelTankSizeButton.innerHTML = shop.fuel_tank_size.price + xeroniumIconString;
+    fuelTankSizeButton.onclick = () => {buy("fuel_tank_size")};
+    fuelRefillButton.innerHTML = shop.fuel_refill.price + xeroniumIconString;
+    fuelRefillButton.onclick = () => {buy("fuel_refill")};
+
     shopCoinsView.innerText = 0;
+
+    xeroniumShopIcon.src = xeroniumUrl;
+
+    for (let view of coinIconViews) {
+        view.src = coinUrl;
+    }
 }
 
 export const toggleShop = () => {
