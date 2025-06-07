@@ -61,7 +61,7 @@ import * as ui from "./util/ui.js";
 import * as shop from "./rogue/shop.js";
 import {modifiers, handleObtainAbility, reset as resetRogue} from "./rogue/rogue.js";
 import * as bosses from "./rogue/bosses.js";
-import {currentFuel, updateFuel} from "./rogue/fuel.js";
+import {currentFuel, updateFuel, reset as resetFuel} from "./rogue/fuel.js";
 
 import { createFragementTexture, prepareVornoi } from "./features/VoronoiFracture.js";
 import { hideStatsMenue, showStatsMenue, updateStatView } from "./rogue/statsMenue.js";
@@ -1457,6 +1457,7 @@ const resetGame = () => {
 
   shop.resetShop();
   resetRogue();
+  resetFuel();
 
   currentExperience = 0;
   experienceNeeded = 200;

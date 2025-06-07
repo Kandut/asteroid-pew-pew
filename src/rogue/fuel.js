@@ -39,4 +39,11 @@ export const init = () => {
     fuelTankImageView.src = fuelTankUrl;
 }
 
+export const reset = () => {
+    maxFuel = baseMaxFuel;
+    currentFuel = baseMaxFuel;
+
+    updateFuel(currentFuel);
+}
+
 init();
