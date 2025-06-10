@@ -51,6 +51,7 @@ import abilityPowerupUrl from "/img/rogue/ability_powerup.png?url";
 import plintinPowerupUrl from "/img/rogue/plintin_powerup.png?url";
 import xeroniumPowerupUrl from "/img/rogue/xeronium_powerup.png?url";
 import blubboniumPowerupUrl from "/img/rogue/blubbonium_powerup.png?url";
+import fuelIconUrl from "/img/rogue/fuel_powerup.png?url";
 
 import spaceshipUrl from "/img/Spaceship.png?url";
 import wingLeftUrl from "/img/WingLeft.png?url";
@@ -61,7 +62,7 @@ import * as ui from "./util/ui.js";
 import * as shop from "./rogue/shop.js";
 import {modifiers, handleObtainAbility, reset as resetRogue} from "./rogue/rogue.js";
 import * as bosses from "./rogue/bosses.js";
-import {currentFuel, updateFuel, reset as resetFuel, fuelRegen, regenFuel, setRegenFuel} from "./rogue/fuel.js";
+import {currentFuel, updateFuel, reset as resetFuel, fuelRegen, regenFuel, setRegenFuel, baseFuelPowerupYield} from "./rogue/fuel.js";
 
 import { createFragementTexture, prepareVornoi } from "./features/VoronoiFracture.js";
 import { hideStatsMenue, showStatsMenue, updateStatView } from "./rogue/statsMenue.js";
@@ -172,6 +173,8 @@ const powerupTextures = {
   "plintin": plintinPowerupUrl,
   "xeronium": xeroniumPowerupUrl,
   "blubbonium": blubboniumPowerupUrl,
+
+  "fuel": fuelIconUrl,
 }
 
 // bosses
@@ -1032,6 +1035,10 @@ const update = (deltaTime) => {
           collectedPowerups.bullet_damage++;
           collectedPowerups.changes = true;
           ui.updateBulletDamage(bulletDamage);
+          playPowerupSound();
+          break;
+        case "fuel":
+          updateFuel(currentFuel + baseFuelPowerupYield * modifiers.powerup_fuel_m + modifiers.powerup_fuel_a);
           playPowerupSound();
           break;
         case "rocket-piercing":

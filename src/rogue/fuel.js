@@ -8,6 +8,7 @@ const maxFuelWidth = 90; //pixels
 const maxMarginLeft = 5;
 const baseMaxFuel = 1000;
 const baseFuelRegen = 0.25;
+export const baseFuelPowerupYield = 1000;
 export let maxFuel = baseMaxFuel;
 export let currentFuel = baseMaxFuel;
 export let fuelRegen = baseFuelRegen;

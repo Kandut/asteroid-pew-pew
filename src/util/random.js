@@ -63,8 +63,8 @@ export const randomAsteroidSize = (timePlayed) => {
 };
 
 export const randomPowerupType = () => {
-  const types = ["health", "damage", "rocket-piercing", "coins", "experience", "ability", "plintin", "xeronium", "blubbonium"];
-  const probabilities = [3, 1, 1, 0.5, 0.5, 0.1, 0.5, 0.5, 0.5];
+  const types = ["health", "damage", "rocket-piercing", "coins", "experience", "ability", "plintin", "xeronium", "blubbonium", "fuel"];
+  const probabilities = [2, 1, 1, 0.5, 0.5, 0.1, 0.5, 0.5, 0.5, 0.75];
   return randomRangeWithProbability(types, probabilities);
 };
 

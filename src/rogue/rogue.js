@@ -214,6 +214,9 @@ export const reset = () => {
     
         powerup_cooldown_m: 1,
         powerup_cooldown_a: 0,
+
+        powerup_fuel_m: 1,
+        powerup_fuel_a: 0,
     
         asteroid_radius_m: 1,
         asteroid_radius_a: 0,

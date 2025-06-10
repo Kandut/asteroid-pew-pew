@@ -511,6 +511,7 @@ const drawPowerup = (entity) => {
     case "plintin":
     case "xeronium":
     case "blubbonium":
+    case "fuel":
       break;
     default:
       console.warn("Unknown powerup type:", entity.type);
