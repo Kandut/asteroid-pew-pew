@@ -7,8 +7,15 @@ const maxFuelHeight = 380; //pixels
 const maxFuelWidth = 90; //pixels
 const maxMarginLeft = 5;
 const baseMaxFuel = 1000;
+const baseFuelRegen = 0.25;
 export let maxFuel = baseMaxFuel;
 export let currentFuel = baseMaxFuel;
+export let fuelRegen = baseFuelRegen;
+export let regenFuel = false;
+
+export const setRegenFuel = (value) => {
+    regenFuel = value;
+}
 
 export const updateFuel = (fuel) => {
     currentFuel = fuel;
@@ -42,6 +49,7 @@ export const init = () => {
 export const reset = () => {
     maxFuel = baseMaxFuel;
     currentFuel = baseMaxFuel;
+    fuelRegen = baseFuelRegen;
 
     updateFuel(currentFuel);
 }

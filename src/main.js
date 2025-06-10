@@ -61,7 +61,7 @@ import * as ui from "./util/ui.js";
 import * as shop from "./rogue/shop.js";
 import {modifiers, handleObtainAbility, reset as resetRogue} from "./rogue/rogue.js";
 import * as bosses from "./rogue/bosses.js";
-import {currentFuel, updateFuel, reset as resetFuel} from "./rogue/fuel.js";
+import {currentFuel, updateFuel, reset as resetFuel, fuelRegen, regenFuel, setRegenFuel} from "./rogue/fuel.js";
 
 import { createFragementTexture, prepareVornoi } from "./features/VoronoiFracture.js";
 import { hideStatsMenue, showStatsMenue, updateStatView } from "./rogue/statsMenue.js";
@@ -724,9 +724,12 @@ const processEvents = () => {
       if (currentFuel > 0) {
         updateFuel(currentFuel - 1);
       } else {
+        updateFuel(currentFuel + fuelRegen);
         spaceship.force.x = 0;
         spaceship.force.y = 0;
       }
+    } else {
+      updateFuel(currentFuel + fuelRegen);
     }
   }
 };
