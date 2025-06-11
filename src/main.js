@@ -62,7 +62,7 @@ import * as ui from "./util/ui.js";
 import * as shop from "./rogue/shop.js";
 import {modifiers, handleObtainAbility, reset as resetRogue} from "./rogue/rogue.js";
 import * as bosses from "./rogue/bosses.js";
-import {currentFuel, updateFuel, reset as resetFuel, fuelRegen, baseFuelPowerupYield, updateStats as updateFuelStats} from "./rogue/fuel.js";
+import {currentFuel, updateFuel, reset as resetFuel, fuelRegen, baseFuelPowerupYield, updateStats as updateFuelStats, baseMaxFuel, baseFuelRegen} from "./rogue/fuel.js";
 
 import { createFragementTexture, prepareVornoi } from "./features/VoronoiFracture.js";
 import { hideStatsMenue, showStatsMenue, updateStatView } from "./rogue/statsMenue.js";
@@ -243,7 +243,7 @@ const toggleMenue = (menueType) => {
         shop.hideShop();
         ui.hidePauseMenu();
 
-        updateStatView(modifiers, collectedPowerups, baseBulletDamage, baseBulletCooldown, baseRocketPiercing, baseRocketCooldown, baseExperienceGain);
+        updateStatView(modifiers, collectedPowerups, baseBulletDamage, baseBulletCooldown, baseRocketPiercing, baseRocketCooldown, baseExperienceGain, baseMaxFuel, baseFuelRegen);
         showStatsMenue();
         break;
     }
