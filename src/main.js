@@ -247,7 +247,19 @@ const toggleMenue = (menueType) => {
         shop.hideShop();
         ui.hidePauseMenu();
 
-        updateStatView(modifiers, collectedPowerups, baseBulletDamage, baseBulletCooldown, baseRocketPiercing, baseRocketCooldown, baseExperienceGain, baseMaxFuel, baseFuelRegen, baseCriticalHitChance, baseCriticalHitDamage);
+        updateStatView(
+          modifiers, 
+          collectedPowerups, 
+          baseBulletDamage, 
+          baseBulletCooldown, 
+          baseRocketPiercing, 
+          baseRocketCooldown, 
+          baseExperienceGain, 
+          baseMaxFuel, 
+          baseFuelRegen, 
+          baseCriticalHitChance, 
+          baseCriticalHitDamage
+        );
         showStatsMenue();
         break;
     }
@@ -570,7 +582,7 @@ const doFrame = () => {
 
 const processEvents = () => {
   // bullets
-  if (shootingBullets && now - lastBulletTime >= bulletCooldown && spaceship) {
+  if (shootingBullets && now - lastBulletTime >= bulletCooldown && spaceship && !modifiers.no_more_bullets) {
     let rotation = modifiers.shoot_random_direction ? Math.random() * 360 : spaceship.rotation + (Math.random() - 0.5) * 0.1;
     const offsetMultiplier = bulletIndex % 2 === 0 ? -1 : 1;
     const bulletPosition = angleToUnitVector(spaceship.rotation + (Math.PI / 2) * offsetMultiplier);
@@ -590,44 +602,46 @@ const processEvents = () => {
 
   // rockets
   if (shootingRockets && now - lastRocketTime >= rocketCooldown && spaceship) {
-    const targets = [
-      {
-        position: {
-          x: spaceship.position.x - Math.cos(spaceship.rotation) * 100,
-          y: spaceship.position.y - Math.sin(spaceship.rotation) * 100,
+    for (let i = 0; i < modifiers.rocket_multiplier; i++) {
+      const targets = [
+        {
+          position: {
+            x: spaceship.position.x - Math.cos(spaceship.rotation) * 100,
+            y: spaceship.position.y - Math.sin(spaceship.rotation) * 100,
+          },
         },
-      },
-      {
-        position: {
-          x: spaceship.position.x,
-          y: spaceship.position.y,
+        {
+          position: {
+            x: spaceship.position.x,
+            y: spaceship.position.y,
+          },
         },
-      },
-    ];
-    for (let i = 0; i < Math.min(rocketPiercing, asteroids.length); i++) {
-      let asteroid;
-      do {
-        asteroid = asteroids[Math.floor(Math.random() * asteroids.length)];
-      } while (targets.includes(asteroid) || bosses.bossTypes.includes(asteroid.type));
-      asteroid.frozen = true;
-      asteroid.velocity.x = 0;
-      asteroid.velocity.y = 0;
-      asteroid.angularVelocity = 0;
-      asteroid.force.x = 0;
-      asteroid.force.y = 0;
-      asteroid.torque = 0;
-      targets.push(asteroid);
+      ];
+      for (let i = 0; i < Math.min(rocketPiercing, asteroids.length); i++) {
+        let asteroid;
+        do {
+          asteroid = asteroids[Math.floor(Math.random() * asteroids.length)];
+        } while (targets.includes(asteroid) || bosses.bossTypes.includes(asteroid.type));
+        asteroid.frozen = true;
+        asteroid.velocity.x = 0;
+        asteroid.velocity.y = 0;
+        asteroid.angularVelocity = 0;
+        asteroid.force.x = 0;
+        asteroid.force.y = 0;
+        asteroid.torque = 0;
+        targets.push(asteroid);
+      }
+
+      const lastDiff = normalize(sub(targets.at(-1).position, targets.at(-2).position));
+      targets.push({
+        position: {
+          x: targets.at(-1).position.x + lastDiff.x * 100,
+          y: targets.at(-1).position.y + lastDiff.y * 100,
+        },
+      });
+
+      addRocket({ ...spaceship.position }, spaceship.rotation, { x: 0, y: 0 }, 0, targets);
     }
-
-    const lastDiff = normalize(sub(targets.at(-1).position, targets.at(-2).position));
-    targets.push({
-      position: {
-        x: targets.at(-1).position.x + lastDiff.x * 100,
-        y: targets.at(-1).position.y + lastDiff.y * 100,
-      },
-    });
-
-    addRocket({ ...spaceship.position }, spaceship.rotation, { x: 0, y: 0 }, 0, targets);
 
     lastRocketTime = now;
   }

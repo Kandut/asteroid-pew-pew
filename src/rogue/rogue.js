@@ -101,6 +101,16 @@ export const singleTimeUpgrades = [
             enableModifier("permanent_fuel_regeneration");
             multiplyStat("spaceship_acceleration_m", 0.5);
         }
+    },
+    {
+        "title": "Double rockets",
+        "description": "Fire two rockets instead of one, gain +3 piercing and disable bullets",
+        "active": false,
+        "callback": () => {
+            addToStat("rocket_multiplier", 1);
+            enableModifier("no_more_bullets");
+            addToStat("rocket_piercing_a", 3);
+        }
     }
 ]
 
@@ -302,6 +312,8 @@ export const reset = () => {
     
         shoot_random_direction: false,
         permanent_fuel_regeneration: false,
+        rocket_multiplier: 1,
+        no_more_bullets: false,
     }
 
     singleTimeUpgrades.map((upgrade) => {
