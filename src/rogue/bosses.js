@@ -24,11 +24,8 @@ export const bossTypes = ["Colossus"];
 export const addBoss = (addAsteroid, type) => {
     if (!type || !Object.keys(bosses).includes(type)) {
         let index = randomIndexWithProbability(bossProbabilities);
-        console.log(index);
         type = bossTypes[index];
     }
-
-    console.log(type);
 
     addBossAsAstroid(addAsteroid, bosses[type]);
 }

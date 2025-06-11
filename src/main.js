@@ -1278,7 +1278,7 @@ const addAsteroid = (
   } else if (type === "golden") {
     asteroid.hp *= 10;
   } else if (type === "Colossus") {
-    asteroid.hp = 3000 * modifiers.asteroid_health_m + modifiers.asteroid_health_a;
+    asteroid.hp = 10000 * modifiers.asteroid_health_m + modifiers.asteroid_health_a;
   } else if (shop.resourceTypes.includes(type)) {
     asteroid.dropResource = false;
     asteroid.hp *= 2;
