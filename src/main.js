@@ -62,7 +62,7 @@ import * as ui from "./util/ui.js";
 import * as shop from "./rogue/shop.js";
 import {modifiers, handleObtainAbility, reset as resetRogue} from "./rogue/rogue.js";
 import * as bosses from "./rogue/bosses.js";
-import {currentFuel, updateFuel, reset as resetFuel, fuelRegen, baseFuelPowerupYield, updateStats as updateFuelStats, baseMaxFuel, baseFuelRegen} from "./rogue/fuel.js";
+import {currentFuel, updateFuel, reset as resetFuel, fuelRegen, baseFuelPowerupYield, updateStats as updateFuelStats, baseMaxFuel, baseFuelRegen, hideFuelTank, showFuelTank} from "./rogue/fuel.js";
 
 import { createFragementTexture, prepareVornoi } from "./features/VoronoiFracture.js";
 import { hideStatsMenue, showStatsMenue, updateStatView } from "./rogue/statsMenue.js";
@@ -1388,7 +1388,7 @@ const addFlameParticle = (position, rotation, parent) => {
 };
 
 const addPowerup = (type, position, rotation, velocity, angularVelocity) => {
-  if (hitlessModeEnabled && ["health"].includes(type)) {
+  if (hitlessModeEnabled && ["health"].includes(type) || movementEnabled == false && ["fuel"].includes(type)) {
     return;
   }
 
@@ -1427,6 +1427,13 @@ const initGame = () => {
   canvas.height = canvas.clientHeight;
   addSpaceship({ x: canvas.width / 2, y: canvas.height / 2 }, 0, { x: 0, y: 0 }, 0);
   ui.setMaxHp(hitlessModeEnabled ? 1 : 5);
+
+  if (!movementEnabled) {
+    hideFuelTank();
+  } else {
+    showFuelTank();
+  }
+
   lastBossTime = 100;
 };
 

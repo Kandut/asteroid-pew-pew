@@ -3,6 +3,7 @@ import fuelTankUrl from "/img/rogue/fuel_tank.png?url";
 
 const fuelTankImageView = document.getElementById("fuel-tank-image");
 const fuelTankFillingView = document.getElementById("fuel-tank-filling");
+const fuelTankTextView = document.getElementById("fuel-text");
 
 const maxFuelHeight = 380; //pixels
 const maxFuelWidth = 90; //pixels
@@ -54,6 +55,18 @@ export const reset = () => {
     fuelRegen = baseFuelRegen;
 
     updateFuel(currentFuel);
+}
+
+export const showFuelTank = () => {
+    fuelTankImageView.style.display = "block";
+    fuelTankFillingView.style.display = "block";
+    fuelTankTextView.style.display = "block";
+}
+
+export const hideFuelTank = () => {
+    fuelTankImageView.style.display = "none";
+    fuelTankFillingView.style.display = "none";
+    fuelTankTextView.style.display = "none";
 }
 
 init();
