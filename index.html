@@ -11,8 +11,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Asteroid Pew Pew</title>
     <link rel="icon" type="image/png" href="/asteroid-pew-pew/favicon.png" sizes="90x90" />
-    <script type="module" crossorigin src="/asteroid-pew-pew/assets/index-CQrLZCH7.js"></script>
-    <link rel="stylesheet" crossorigin href="/asteroid-pew-pew/assets/index-CGSIjSwP.css">
+    <script type="module" crossorigin src="/asteroid-pew-pew/assets/index-CS9fhFML.js"></script>
+    <link rel="stylesheet" crossorigin href="/asteroid-pew-pew/assets/index-CvTFoRFK.css">
   </head>
 
   <body>
@@ -63,7 +63,7 @@
         <div>Fire rate: <span id="fire-rate">10.0</span> shots/s</div>
         <div>Damage: <span id="bullet-damage">1.0</span> hp</div>
         <div>Rocket piercing: <span id="rocket-piercing">3</span> targets</div>
-        <div>Coins: <span id="coins">0</span></div>
+        <div>Coins: <span id="coins">0</span><img class="resource-icon" name="coin-icon" alt=""></div>
         <div>
           HP:
           <ul id="hp">
@@ -186,25 +186,38 @@
       <section id="shop" class="menu">
         <label for="shop-bullet-attack-speed">
           <span>Bullet attack speed</span>
-          <button id="shop-bullet-attack-speed">200💲</button>
+          <button id="shop-bullet-attack-speed">200<img class="resource-icon" name="coin-icon" alt=""></button>
         </label>
         <label for="shop-bullet-attack-compression">
           <span>Bullet attack compression</span>
-          <button id="shop-bullet-attack-compression">200💲</button>
+          <button id="shop-bullet-attack-compression">200<img class="resource-icon" name="coin-icon" alt=""></button>
         </label>
         <label for="shop-rocket-attack-speed">
           <span>Rocket attack speed</span>
-          <button id="shop-rocket-attack-speed">200💲</button>
+          <button id="shop-rocket-attack-speed">200<img class="resource-icon" name="coin-icon" alt=""></button>
         </label>
         <label for="shop-rocket-piercing">
           <span>Rocket piercing</span>
-          <button id="shop-rocket-piercing">200💲</button>
+          <button id="shop-rocket-piercing">200<img class="resource-icon" name="coin-icon" alt=""></button>
         </label>
         <label for="shop-experience-gain">
           <span>Experience gain</span>
-          <button id="shop-experience-gain">200💲</button>
+          <button id="shop-experience-gain">200<img class="resource-icon" name="coin-icon" alt=""></button>
         </label>
-        <p><span id="shop-coins">0</span>💲</p>
+        <label for="shop-fuel-tank-size">
+          <span>Fuel Tank Size</span>
+          <button id="shop-fuel-tank-size">10</button>
+        </label>
+        <label for="shop-refill-rate">
+          <span>Fuel Refill Speed</span>
+          <button id="shop-refill-rate">10</button>
+        </label>
+        <p>
+          <span id="shop-coins">0</span>
+          <img class="resource-icon" name="coin-icon" alt="">  
+          <span id="shop-xeronium">0</span>
+          <img id="shop-xeronium-icon" class="resource-icon" alt="">
+        </p>
       </section>
       <section id="levelup-menu" class="menu">
         <div id="levelup-1">
@@ -233,50 +246,69 @@
       <section id="stats-menu" class="menu">
         <div id="stats-legend">
           Legend: (
-          <span class="rarity-common">base</span> + 
-          <span class="rarity-uncommon">boxes</span> ) * 
-          <span class="rarity-epic">mutliplicator</span> + 
-          <span class="rarity-legendary">adaptive</span> = 
-          <span class="rarity-historical">total</span>
+          <span class="stats-rarity-common">base</span> + 
+          <span class="stats-rarity-uncommon">boxes</span> ) * 
+          <span class="stats-rarity-epic">mutliplicator</span> + 
+          <span class="stats-rarity-legendary">adaptive</span> = 
+          <span class="stats-rarity-historical">total</span>
         </div>
         <div>
           Bullet Damage: (
-          <span id="bullet-damage-base" class="rarity-common">base</span> + 
-          <span id="bullet-damage-boxes" class="rarity-uncommon">boxes</span> ) * 
-          <span id="bullet-damage-m" class="rarity-epic">mutli</span> + 
-          <span id="bullet-damage-a" class="rarity-legendary">adaptive</span> = 
-          <span id="bullet-damage-total" class="rarity-historical">total</span> hp
+          <span id="stats-bullet-damage-base" class="rarity-common">base</span> + 
+          <span id="stats-bullet-damage-boxes" class="rarity-uncommon">boxes</span> ) * 
+          <span id="stats-bullet-damage-m" class="rarity-epic">mutli</span> + 
+          <span id="stats-bullet-damage-a" class="rarity-legendary">adaptive</span> = 
+          <span id="stats-bullet-damage-total" class="rarity-historical">total</span> hp
         </div>
         <div>
           Bullet Cooldown: 
-          <span id="bullet-cooldown-base" class="rarity-common">base</span> * 
-          <span id="bullet-cooldown-m" class="rarity-epic">mutli</span> + 
-          <span id="bullet-cooldown-a" class="rarity-legendary">adaptive</span> = 
-          <span id="bullet-cooldown-total" class="rarity-historical">total</span> ms
+          <span id="stats-bullet-cooldown-base" class="rarity-common">base</span> * 
+          <span id="stats-bullet-cooldown-m" class="rarity-epic">mutli</span> + 
+          <span id="stats-bullet-cooldown-a" class="rarity-legendary">adaptive</span> = 
+          <span id="stats-bullet-cooldown-total" class="rarity-historical">total</span> ms
         </div>
         <div>
           Rocket Piercing: (
-          <span id="rocket-piercing-base" class="rarity-common">base</span> + 
-          <span id="rocket-piercing-boxes" class="rarity-uncommon">boxes</span> ) * 
-          <span id="rocket-piercing-m" class="rarity-epic">mutli</span> + 
-          <span id="rocket-piercing-a" class="rarity-legendary">adaptive</span> = 
-          <span id="rocket-piercing-total" class="rarity-historical">total</span> targets
+          <span id="stats-rocket-piercing-base" class="rarity-common">base</span> + 
+          <span id="stats-rocket-piercing-boxes" class="rarity-uncommon">boxes</span> ) * 
+          <span id="stats-rocket-piercing-m" class="rarity-epic">mutli</span> + 
+          <span id="stats-rocket-piercing-a" class="rarity-legendary">adaptive</span> = 
+          <span id="stats-rocket-piercing-total" class="rarity-historical">total</span> targets
         </div>
         <div>
           Rocket Cooldown: 
-          <span id="rocket-cooldown-base" class="rarity-common">base</span> * 
-          <span id="rocket-cooldown-m" class="rarity-epic">mutli</span> + 
-          <span id="rocket-cooldown-a" class="rarity-legendary">adaptive</span> = 
-          <span id="rocket-cooldown-total" class="rarity-historical">total</span> ms
+          <span id="stats-rocket-cooldown-base" class="rarity-common">base</span> * 
+          <span id="stats-rocket-cooldown-m" class="rarity-epic">mutli</span> + 
+          <span id="stats-rocket-cooldown-a" class="rarity-legendary">adaptive</span> = 
+          <span id="stats-rocket-cooldown-total" class="rarity-historical">total</span> ms
         </div>
         <div>
           Experience Gain: 
-          <span id="experience-gain-base" class="rarity-common">base</span> * 
-          <span id="experience-gain-m" class="rarity-epic">mutli</span> + 
-          <span id="experience-gain-a" class="rarity-legendary">adaptive</span> = 
-          <span id="experience-gain-total" class="rarity-historical">total</span> xp
+          <span id="stats-experience-gain-base" class="rarity-common">base</span> * 
+          <span id="stats-experience-gain-m" class="rarity-epic">mutli</span> + 
+          <span id="stats-experience-gain-a" class="rarity-legendary">adaptive</span> = 
+          <span id="stats-experience-gain-total" class="rarity-historical">total</span> xp
+        </div>
+        <div>
+          Fuel Tank Size:
+          <span id="stats-fuel-tank-size-base" class="rarity-common">base</span> * 
+          <span id="stats-fuel-tank-size-m" class="rarity-epic">mutli</span> + 
+          <span id="stats-fuel-tank-size-a" class="rarity-legendary">adaptive</span> = 
+          <span id="stats-fuel-tank-size-total" class="rarity-historical">total</span> l
+        </div>
+        <div>
+          Fuel Regeneration: 
+          <span id="stats-fuel-regen-base" class="rarity-common">base</span> * 
+          <span id="stats-fuel-regen-m" class="rarity-epic">mutli</span> + 
+          <span id="stats-fuel-regen-a" class="rarity-legendary">adaptive</span> = 
+          <span id="stats-fuel-regen-total" class="rarity-historical">total</span> l / frame
         </div>
       </section>
+
+      <div id="fuel-text">Fuel</div>
+      <div id="fuel-tank-filling"></div>
+      <img id="fuel-tank-image" alt="">
+
       <section id="game-over">
         <h1>
           <span>Game Over</span>
