@@ -9,6 +9,16 @@ const bulletCooldownAView = document.getElementById("stats-bullet-cooldown-a");
 const bulletCooldownMView = document.getElementById("stats-bullet-cooldown-m");
 const bulletCooldownTotalView = document.getElementById("stats-bullet-cooldown-total");
 
+const bulletCritChanceBase = document.getElementById("stats-bullet-crit-chance-base");
+const bulletCritChanceM = document.getElementById("stats-bullet-crit-chance-m");
+const bulletCritChanceA = document.getElementById("stats-bullet-crit-chance-a");
+const bulletCritChanceTotal = document.getElementById("stats-bullet-crit-chance-total");
+
+const bulletCritDamageBase = document.getElementById("stats-bullet-crit-damage-base");
+const bulletCritDamageM = document.getElementById("stats-bullet-crit-damage-m");
+const bulletCritDamageA = document.getElementById("stats-bullet-crit-damage-a");
+const bulletCritDamageTotal = document.getElementById("stats-bullet-crit-damage-total");
+
 const rocketPiercingBaseView = document.getElementById("stats-rocket-piercing-base");
 const rocketPiercingBoxesView = document.getElementById("stats-rocket-piercing-boxes");
 const rocketPiercingMView = document.getElementById("stats-rocket-piercing-m");
@@ -37,7 +47,19 @@ const fuelRegenTotal = document.getElementById("stats-fuel-regen-total");
 
 const statsMenueView = document.getElementById("stats-menu");
 
-export const updateStatView = (modifier, collectedPowerups, baseBulletDamage, baseBulletCooldown, baseRocketPiercing, baseRocketCooldown, baseExperienceGain, baseMaxFuel, baseFuelRegen) => {
+export const updateStatView = (
+    modifier, 
+    collectedPowerups, 
+    baseBulletDamage, 
+    baseBulletCooldown, 
+    baseRocketPiercing, 
+    baseRocketCooldown, 
+    baseExperienceGain, 
+    baseMaxFuel, 
+    baseFuelRegen,
+    baseCritChance,
+    baseCritDamage,
+) => {
     bulletDamageBaseView.innerText = baseBulletDamage.toFixed(1);
     bulletDamageBoxesView.innerText = collectedPowerups.bullet_damage.toFixed(0);
     bulletDamageMView.innerText = modifier.bullet_damage_m.toFixed(2);
@@ -48,6 +70,16 @@ export const updateStatView = (modifier, collectedPowerups, baseBulletDamage, ba
     bulletCooldownAView.innerText = modifier.bullet_attack_speed_a.toFixed(1);
     bulletCooldownMView.innerText = modifier.bullet_attack_speed_m.toFixed(2);
     bulletCooldownTotalView.innerText = (baseBulletCooldown * ( 1 / modifier.bullet_attack_speed_m ) + modifier.bullet_attack_speed_a).toFixed(0);
+
+    bulletCritChanceBase.innerText = baseCritChance * 100;
+    bulletCritChanceM.innerText = modifier.critical_hit_chance_m.toFixed(2);
+    bulletCritChanceA.innerText = modifier.critical_hit_chance_a * 100;
+    bulletCritChanceTotal.innerText = baseCritChance * 100 * modifier.critical_hit_chance_m + modifier.critical_hit_chance_a * 100;
+
+    bulletCritDamageBase.innerText = baseCritDamage * 100;
+    bulletCritDamageM.innerText = modifier.critical_hit_damage_m.toFixed(2);
+    bulletCritDamageA.innerText = modifier.critical_hit_damage_a * 100;
+    bulletCritDamageTotal.innerText = baseCritDamage * 100 * modifier.critical_hit_damage_m + modifier.critical_hit_damage_a * 100;
 
     rocketPiercingBaseView.innerText = baseRocketPiercing.toFixed(0);
     rocketPiercingBoxesView.innerText = collectedPowerups.rocket_piercing.toFixed(0);

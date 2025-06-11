@@ -246,11 +246,11 @@
       <section id="stats-menu" class="menu">
         <div id="stats-legend">
           Legend: (
-          <span class="stats-rarity-common">base</span> + 
-          <span class="stats-rarity-uncommon">boxes</span> ) * 
-          <span class="stats-rarity-epic">mutliplicator</span> + 
-          <span class="stats-rarity-legendary">adaptive</span> = 
-          <span class="stats-rarity-historical">total</span>
+          <span class="rarity-common">base</span> + 
+          <span class="rarity-uncommon">boxes</span> ) * 
+          <span class="rarity-epic">mutliplicator</span> + 
+          <span class="rarity-legendary">adaptive</span> = 
+          <span class="rarity-historical">total</span>
         </div>
         <div>
           Bullet Damage: (
@@ -266,6 +266,20 @@
           <span id="stats-bullet-cooldown-m" class="rarity-epic">mutli</span> + 
           <span id="stats-bullet-cooldown-a" class="rarity-legendary">adaptive</span> = 
           <span id="stats-bullet-cooldown-total" class="rarity-historical">total</span> ms
+        </div>
+        <div>
+          Bullet Crit Chance Damage: (
+          <span id="stats-bullet-crit-chance-base" class="rarity-common">base</span> * 
+          <span id="stats-bullet-crit-chance-m" class="rarity-epic">mutli</span> + 
+          <span id="stats-bullet-crit-chance-a" class="rarity-legendary">adaptive</span> = 
+          <span id="stats-bullet-crit-chance-total" class="rarity-historical">total</span> %
+        </div>
+        <div>
+          Bullet Crit Damage: (
+          <span id="stats-bullet-crit-damage-base" class="rarity-common">base</span> * 
+          <span id="stats-bullet-crit-damage-m" class="rarity-epic">mutli</span> + 
+          <span id="stats-bullet-crit-damage-a" class="rarity-legendary">adaptive</span> = 
+          <span id="stats-bullet-crit-damage-total" class="rarity-historical">total</span> %
         </div>
         <div>
           Rocket Piercing: (
@@ -294,14 +308,14 @@
           <span id="stats-fuel-tank-size-base" class="rarity-common">base</span> * 
           <span id="stats-fuel-tank-size-m" class="rarity-epic">mutli</span> + 
           <span id="stats-fuel-tank-size-a" class="rarity-legendary">adaptive</span> = 
-          <span id="stats-fuel-tank-size-total" class="rarity-historical">total</span> l
+          <span id="stats-fuel-tank-size-total" class="rarity-historical">total</span> L
         </div>
         <div>
           Fuel Regeneration: 
           <span id="stats-fuel-regen-base" class="rarity-common">base</span> * 
           <span id="stats-fuel-regen-m" class="rarity-epic">mutli</span> + 
           <span id="stats-fuel-regen-a" class="rarity-legendary">adaptive</span> = 
-          <span id="stats-fuel-regen-total" class="rarity-historical">total</span> l / frame
+          <span id="stats-fuel-regen-total" class="rarity-historical">total</span> L / frame
         </div>
       </section>
 

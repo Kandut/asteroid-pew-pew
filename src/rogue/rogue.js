@@ -23,6 +23,8 @@ const rerollAbilitiesButton = document.getElementById("reroll-abilities");
 const rerollAbilitiesPriceView = document.getElementById("reroll-abilities-price");
 const rerollAbilitiesImage = document.getElementById("reroll-abilities-price-img");
 
+export const baseCriticalHitChance = 0.15;
+export const baseCriticalHitDamage = 1.25;
 const baseRerollPrice = 15;
 let rerollPrice = baseRerollPrice;
 const rerollPriceAddition = 3;
@@ -105,6 +107,15 @@ export const singleTimeUpgrades = [
 export const addToStat = (key, addition) => {
     modifiers.changes = true;
     modifiers[key] += addition;
+
+    if (key.includes("critical")) {
+        updateCriticalStats();
+    }
+}
+
+const updateCriticalStats = () => {
+    modifiers.critical_hit_chance = baseCriticalHitChance * modifiers.critical_hit_chance_m + modifiers.critical_hit_chance_a;
+    modifiers.critical_hit_damage = baseCriticalHitDamage * modifiers.critical_hit_damage_m + modifiers.critical_hit_damage_a;
 }
 
 export const multiplyStat = (key, multi) => {
@@ -281,8 +292,13 @@ export const reset = () => {
 
         spaceship_acceleration_m: 1,
 
-        critical_hit_chance: 7.5,
-        critical_hit_damage: 1.25,
+        critical_hit_chance: baseCriticalHitChance,
+        critical_hit_chance_m: 1,
+        critical_hit_chance_a: 0,
+
+        critical_hit_damage: baseCriticalHitDamage,
+        critical_hit_damage_m: 1,
+        critical_hit_damage_a: 0,
     
         shoot_random_direction: false,
         permanent_fuel_regeneration: false,
