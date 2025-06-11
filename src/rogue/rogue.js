@@ -89,6 +89,15 @@ export const singleTimeUpgrades = [
             enableModifier("shoot_random_direction");
             multiplyStat("bullet_damage_m", 10);
         }
+    },
+    {
+        "title": "Permanent Fuel Regeneration",
+        "description": "Fuel now regenerates while flying, but the ship flies at half speed",
+        "active": false,
+        "callback": () => {
+            enableModifier("permanent_fuel_regeneration");
+            multiplyStat("spaceship_acceleration_m", 0.5);
+        }
     }
 ]
 
@@ -240,8 +249,11 @@ export const reset = () => {
     
         asteroid_spawn_rate_m: 1,
         asteroid_spawn_rate_a: 0,
+
+        spaceship_acceleration_m: 1,
     
         shoot_random_direction: false,
+        permanent_fuel_regeneration: false,
     }
 
     singleTimeUpgrades.map((upgrade) => {

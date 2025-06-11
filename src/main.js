@@ -726,8 +726,14 @@ const processEvents = () => {
     }
 
     if (spaceship.force.x != 0 || spaceship.force.y != 0) {
+      spaceship.force.x = spaceship.force.x * modifiers.spaceship_acceleration_m;
+      spaceship.force.y = spaceship.force.y * modifiers.spaceship_acceleration_m;
+
       if (currentFuel > 0) {
         updateFuel(currentFuel - 1);
+        if (modifiers.permanent_fuel_regeneration) {
+          updateFuel(currentFuel + fuelRegen);
+        }
       } else {
         updateFuel(currentFuel + fuelRegen);
         spaceship.force.x = 0;
