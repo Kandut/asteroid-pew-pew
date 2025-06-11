@@ -1,3 +1,4 @@
+import { modifiers } from "./rogue";
 import fuelTankUrl from "/img/rogue/fuel_tank.png?url";
 
 const fuelTankImageView = document.getElementById("fuel-tank-image");
@@ -12,10 +13,10 @@ export const baseFuelPowerupYield = 1000;
 export let maxFuel = baseMaxFuel;
 export let currentFuel = baseMaxFuel;
 export let fuelRegen = baseFuelRegen;
-export let regenFuel = false;
 
-export const setRegenFuel = (value) => {
-    regenFuel = value;
+export const updateStats = () => {
+    maxFuel = baseMaxFuel * modifiers.max_fuel_m + modifiers.max_fuel_a;
+    fuelRegen = baseFuelRegen * modifiers.fuel_regen_m + modifiers.fuel_regen_a;
 }
 
 export const updateFuel = (fuel) => {

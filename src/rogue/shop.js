@@ -17,7 +17,7 @@ const rocketAttackSpeedButton = document.getElementById("shop-rocket-attack-spee
 const rocketPiercingButton = document.getElementById("shop-rocket-piercing");
 const experienceGainButton = document.getElementById("shop-experience-gain");
 const fuelTankSizeButton = document.getElementById("shop-fuel-tank-size");
-const fuelRefillButton = document.getElementById("shop-fuel-refill");
+const fuelRefillRateButton = document.getElementById("shop-refill-rate");
 const xeroniumShopIcon = document.getElementById("shop-xeronium-icon");
 
 const coinIconViews = document.getElementsByName("coin-icon");
@@ -115,12 +115,12 @@ export const resetShop = () => {
           "currency": "xeronium",
           "button": fuelTankSizeButton
         },
-        "fuel_refill": { // increases how much fuel can be kept in the tank
+        "fuel_refill_rate": { // increases how much fuel can be kept in the tank
           "level": 0,
-          "adaptive": 100,
-          "price": 100,
+          "scaling": 1.2,
+          "price": 10,
           "currency": "xeronium",
-          "button": fuelRefillButton
+          "button": fuelRefillRateButton
         }
     }
 
@@ -175,8 +175,6 @@ function buy(key) {
         const adaptive = shop[key].adaptive ? shop[key].adaptive : 0;
         shop[key].price = Math.round(shop[key].price * scaling + adaptive);
 
-        shop[key].button.innerText = formatNumberName(shop[key].price) + coinIconString;
-
         switch (key) {
             case "bullet_attack_speed": 
                 addToStat(key + "_m", 0.05);
@@ -199,16 +197,23 @@ function buy(key) {
                 break;
 
             case "fuel_tank_size":
+                addToStat("max_fuel_a", 100);
                 break;
 
-            case "fuel_refill":
+            case "fuel_refill_rate":
+                addToStat("fuel_regen_a", 0.05);
                 break;
         }
 
         ui.updateCoins(currentCoins);
+        ui.updatePlintin(currentPlintin);
+        ui.updateXeronium(currentXeronium);
+        ui.updateBlubbonium(currentBlubbonium);
     } else {
         sound.playFailedSound();
     }
+
+    return shop[key].price;
 }
 
 const formatNumberName = (number) => {
@@ -224,20 +229,41 @@ const formatNumberName = (number) => {
 
 export const initialiseShop = () => {
     bulletAttackSpeedButton.innerHTML = shop.bullet_attack_speed.price + coinIconString;
-    bulletAttackSpeedButton.onclick = () => {buy("bullet_attack_speed")};
+    bulletAttackSpeedButton.onclick = () => {
+        let price = buy("bullet_attack_speed");
+        bulletAttackSpeedButton.innerHTML = formatNumberName(price) + coinIconString;
+    };
     bulletCompressionButton.innerHTML = shop.bullet_compression.price + coinIconString;
-    bulletCompressionButton.onclick = () => {buy("bullet_compression")};
+    bulletCompressionButton.onclick = () => {
+        let price = buy("bullet_compression");
+        bulletCompressionButton.innerHTML = formatNumberName(price) + coinIconString;
+    };
     rocketAttackSpeedButton.innerHTML = shop.rocket_attack_speed.price + coinIconString;
-    rocketAttackSpeedButton.onclick = () => {buy("rocket_attack_speed")};
+    rocketAttackSpeedButton.onclick = () => {
+        let price = buy("rocket_attack_speed");
+        rocketAttackSpeedButton.innerHTML = formatNumberName(price) + coinIconString;
+    };
     rocketPiercingButton.innerHTML = shop.rocket_piercing.price + coinIconString;
-    rocketPiercingButton.onclick = () => {buy("rocket_piercing")};
+    rocketPiercingButton.onclick = () => {
+        let price = buy("rocket_piercing");
+        rocketPiercingButton.innerHTML = formatNumberName(price) + coinIconString;
+    };
     experienceGainButton.innerHTML = shop.experience_gain.price + coinIconString;
-    experienceGainButton.onclick = () => {buy("experience_gain")};
+    experienceGainButton.onclick = () => {
+        let price = buy("experience_gain");
+        experienceGainButton.innerHTML = formatNumberName(price) + coinIconString;
+    };
 
     fuelTankSizeButton.innerHTML = shop.fuel_tank_size.price + xeroniumIconString;
-    fuelTankSizeButton.onclick = () => {buy("fuel_tank_size")};
-    fuelRefillButton.innerHTML = shop.fuel_refill.price + xeroniumIconString;
-    fuelRefillButton.onclick = () => {buy("fuel_refill")};
+    fuelTankSizeButton.onclick = () => {
+        let price = buy("fuel_tank_size");
+        fuelTankSizeButton.innerHTML = formatNumberName(price) + xeroniumIconString;
+    };
+    fuelRefillRateButton.innerHTML = shop.fuel_refill_rate.price + xeroniumIconString;
+    fuelRefillRateButton.onclick = () => {
+        let price = buy("fuel_refill_rate");
+        fuelRefillRateButton.innerHTML = formatNumberName(price) + xeroniumIconString;
+    };
 
     shopCoinsView.innerText = 0;
 

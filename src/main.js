@@ -62,7 +62,7 @@ import * as ui from "./util/ui.js";
 import * as shop from "./rogue/shop.js";
 import {modifiers, handleObtainAbility, reset as resetRogue} from "./rogue/rogue.js";
 import * as bosses from "./rogue/bosses.js";
-import {currentFuel, updateFuel, reset as resetFuel, fuelRegen, regenFuel, setRegenFuel, baseFuelPowerupYield} from "./rogue/fuel.js";
+import {currentFuel, updateFuel, reset as resetFuel, fuelRegen, baseFuelPowerupYield, updateStats as updateFuelStats} from "./rogue/fuel.js";
 
 import { createFragementTexture, prepareVornoi } from "./features/VoronoiFracture.js";
 import { hideStatsMenue, showStatsMenue, updateStatView } from "./rogue/statsMenue.js";
@@ -504,6 +504,8 @@ const updateStats = () => {
   powerupCooldown = basePowerupCooldown * (1 / modifiers.powerup_cooldown_m) - modifiers.powerup_cooldown_a;
 
   asteroidCooldown = baseAsteroidCooldown * (1 / modifiers.asteroid_spawn_rate_m) - modifiers.asteroid_spawn_rate_a;
+
+  updateFuelStats();
 
   ui.updateBulletDamage(bulletDamage);
   ui.updateFireRate(bulletCooldown);
