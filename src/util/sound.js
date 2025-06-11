@@ -11,6 +11,7 @@ import armorHit from "/audio/armorHit.wav?url";
 import pickupCoinUrl from "/audio/pickupCoin.wav?url";
 import failedUrl from "/audio/failed.wav?url";
 import pickupResource from "/audio/pickupResource.wav?url";
+import criticalHit from "/audio/crit.wav?url";
 
 let volumeModifier = 0.1;
 export const setVolumeModifier = (value) => {
@@ -96,6 +97,12 @@ export const playPowerupSound = () => {
 
 export const playPickupResourceSound = () => {
   const audio = new Audio(pickupResource);
+  audio.volume = 0.2 * volumeModifier;
+  audio.play().catch(() => {});
+}
+
+export const playCriticalHitSound = () => {
+  const audio = new Audio(criticalHit);
   audio.volume = 0.2 * volumeModifier;
   audio.play().catch(() => {});
 }

@@ -37,6 +37,7 @@ export const FLAMES = "flames";
 export const POWERUP = "powerup";
 export const FLAME_PARTICLES = "flame_particles";
 export const COLLISION = "collision";
+export const CRITICAL_HIT = "critical_hit";
 
 // COLORS
 const WHITE = "#ffffff";
@@ -92,6 +93,7 @@ const entities = {
   [FLASH]: {},
   [POWERUP]: {},
   [COLLISION]: {},
+  [CRITICAL_HIT]: {},
 };
 
 let velocityDrawing = false;
@@ -211,6 +213,9 @@ export const render = () => {
           break;
         case COLLISION:
           drawCollision(entity);
+          break;
+        case CRITICAL_HIT:
+          drawCriticalHit(entity);
           break;
       }
 
@@ -457,7 +462,7 @@ const drawFlash = (entity) => {
   const innerRadius = 3;
   const outerRadius = 15;
 
-  context.fillStyle = "white";
+  context.fillStyle = entity.color  || "white";
   context.strokeStyle = "none";
   context.beginPath();
   context.translate(center.x, center.y);
@@ -558,7 +563,7 @@ const drawCollision = (entity) => {
 
   entity.lifetime--;
 
-  context.strokeStyle = "white";
+  context.strokeStyle = color;
   context.lineWidth = 1;
   context.beginPath();
 
@@ -600,3 +605,7 @@ const drawCollision = (entity) => {
 
   context.save();
 };
+
+const drawCriticalHit = (entity) => {
+  drawFlash(entity);
+}

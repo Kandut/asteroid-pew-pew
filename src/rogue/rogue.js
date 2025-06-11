@@ -29,8 +29,9 @@ const rerollPriceAddition = 3;
 
 export let modifiers = {} // defaults are set in reset()
 
-const rarities = ["common", "uncommon", "rare", "epic", "legendary", "mythic", "historical", "unreal"];             
-const rarityChances = [0.40, 0.30, 0.15, 0.10, 0.05, 0.01, 0.005, 0.001];
+const rarities =        ["common",      "uncommon",     "rare",         "epic",         "legendary",    "mythic",       "historical",   "unreal"];
+export const colors =   ["0,128,0",     "35,228,224",   "35,70,228",    "163,35,228",   "210,23,26",    "255,250,28",   "255,208,252",  "105,9,18"];             
+const rarityChances =   [0.40,          0.30,           0.15,           0.10,           0.05,           0.01,           0.005,          0.001];
 
 export const allBoni = [
     {
@@ -47,7 +48,7 @@ export const allBoni = [
         "description": "Increases your rocket piercing by <span class='<class>'><level></span>",
         "levels": [1, 1, 2, 2, 3, 5, 7, 10],
         "callback": (level) => {
-            const levels = [1,1,1,2,2];
+            const levels =  [1, 1, 2, 2, 3, 5, 7, 10];
             addToStat("rocket_piercing_a", levels[level]);
         }
     },
@@ -56,7 +57,7 @@ export const allBoni = [
         "description": "Increases the experience per asteroid by <span class='<class>'><level></span>",
         "levels": [1, 1, 1, 2, 3, 5, 7, 10],
         "callback": (level) => {
-            const levels = [1,1,1,2,3];
+            const levels = [1, 1, 1, 2, 3, 5, 7, 10];
             addToStat("experience_gain_a", levels[level]);
         }
     },
@@ -198,6 +199,34 @@ function showUpgrade(title, rarity, description, view, upgrade, onselect) {
     }
 }
 
+export const calcCrit = (baseDamage, isCrit) => {
+    const chance = modifiers.critical_hit_chance % 1;
+    const multiplier = modifiers.critical_hit_chance - chance;
+
+    let damage = baseDamage * modifiers.critical_hit_damage ** multiplier;
+
+    if (isCrit == 2 || isCrit == 1 && Math.random() < chance) {
+        damage = damage * modifiers.critical_hit_damage;
+    }
+
+    return damage;
+}
+
+/* Returns a number
+0 = no crit
+1 = crit chance > 1
+2 = crit by chance
+*/
+export const hitIsCrit = () => {
+    if (Math.random() + Math.floor(modifiers.critical_hit_chance) < modifiers.critical_hit_chance) {
+        return 2;
+    }
+    if (modifiers.critical_hit_chance > 1) {
+        return 1;
+    }
+    return 0;
+}
+
 export const reset = () => {
     modifiers = {
         changes: true,
@@ -251,6 +280,9 @@ export const reset = () => {
         asteroid_spawn_rate_a: 0,
 
         spaceship_acceleration_m: 1,
+
+        critical_hit_chance: 7.5,
+        critical_hit_damage: 1.25,
     
         shoot_random_direction: false,
         permanent_fuel_regeneration: false,

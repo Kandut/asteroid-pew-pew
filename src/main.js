@@ -26,6 +26,7 @@ import {
   playAsteroidCollisionSound,
   playBulletHitSound,
   playBulletShootSound,
+  playCriticalHitSound,
   playExplosionSound,
   playPickupCoinSound,
   playPickupResourceSound,
@@ -60,7 +61,7 @@ import bossesColossusUrl from "/img/rogue/colossus.png?url";
 import * as ui from "./util/ui.js";
 
 import * as shop from "./rogue/shop.js";
-import {modifiers, handleObtainAbility, reset as resetRogue} from "./rogue/rogue.js";
+import {modifiers, handleObtainAbility, reset as resetRogue, calcCrit, hitIsCrit, colors} from "./rogue/rogue.js";
 import * as bosses from "./rogue/bosses.js";
 import {currentFuel, updateFuel, reset as resetFuel, fuelRegen, baseFuelPowerupYield, updateStats as updateFuelStats, baseMaxFuel, baseFuelRegen, hideFuelTank, showFuelTank} from "./rogue/fuel.js";
 
@@ -217,6 +218,9 @@ let movement = {
   leftController: false,
   rightController: false,
 };
+
+let critted = false;
+const critTimeout = 10; // ms
 
 let currentMenue = "none"; // types: "pause" "shop" "stats"
 const toggleMenue = (menueType) => {
@@ -554,7 +558,14 @@ const doFrame = () => {
   }
 
   // framerate is controlled by the browser
-  frameHandle = requestAnimationFrame(doFrame);
+  if (critted) {
+    critted = false;
+    lastFrameTime = performance.now() + critTimeout;
+    lastUpdateTime = lastFrameTime;
+    setTimeout(() => {frameHandle = requestAnimationFrame(doFrame)}, critTimeout);
+  } else {
+    frameHandle = requestAnimationFrame(doFrame)
+  }
 };
 
 const processEvents = () => {
@@ -886,8 +897,24 @@ const update = (deltaTime) => {
     }
     if (bullet.friendly) {
       for (const asteroid of asteroids) {
-        if (asteroid.type === "armored") {
-          if (checkAndResolveCollision(bullet, asteroid, showFlash)) {
+        let onCollision = showFlash;
+
+        const isCrit = hitIsCrit();
+
+        if (isCrit) {
+          onCollision = (a,b,c,d) => {
+            const index = (Math.floor(modifiers.critical_hit_chance) + (isCrit == 2 ? 1 : 0)) - 1;
+            const color = "rgb(" + colors[index >= colors.length ? colors.length - 1 : index] + ")";
+            showCriticalHit(a,b,c,d, undefined, color)};
+        }
+
+        if (checkAndResolveCollision(bullet, asteroid, onCollision)) {
+          const bulletDamageDealt = calcCrit(bulletDamage, isCrit);
+          if (isCrit) {
+            critted = true;
+          }
+
+          if (asteroid.type === "armored") {
             gameState.bulletsHit++;
             bullet.velocity.x *= 0.1;
             bullet.velocity.y *= 0.1;
@@ -896,15 +923,17 @@ const update = (deltaTime) => {
             setTimeout(() => {
               bullet.remove = true;
             }, 300);
-          }
-        } else if (asteroid.type === "split") {
-          if (checkAndResolveCollision(bullet, asteroid, showFlash)) {
+          } else if (asteroid.type === "split") {          
             gameState.bulletsHit++;
-            gameState.damageDealt += Math.min(asteroid.hp, bulletDamage);
-            asteroid.hp -= bulletDamage;
+            gameState.damageDealt += Math.min(asteroid.hp, bulletDamageDealt);
+            asteroid.hp -= bulletDamageDealt;
 
             bullet.remove = true;
-            playBulletHitSound();
+            if (isCrit) {
+              playCriticalHitSound();
+            } else {
+              playBulletHitSound();
+            }
 
             prepareVornoi(asteroid, bullet, voronoiNoiseDisabled);
 
@@ -919,11 +948,9 @@ const update = (deltaTime) => {
               playExplosionSound();
               createFragments(fragments, asteroid);
             }
-          }
-        } else if (asteroid.type === "golden") {
-          if (checkAndResolveCollision(bullet, asteroid, showFlash)) {
+          } else if (asteroid.type === "golden") {
             gameState.bulletsHit++;
-            gameState.damageDealt += Math.min(asteroid.hp, bulletDamage);
+            gameState.damageDealt += Math.min(asteroid.hp, 1);
             
             shop.handleGetCoins(1);
             asteroid.hp--;
@@ -940,16 +967,14 @@ const update = (deltaTime) => {
             if (Math.random() > 0.7) {
               playPickupCoinSound();
             }
-          }
-        } else {
-          if (checkAndResolveCollision(bullet, asteroid, showFlash)) {
+          } else {
             gameState.bulletsHit++;
-            gameState.damageDealt += Math.min(asteroid.hp, bulletDamage);
+            gameState.damageDealt += Math.min(asteroid.hp, bulletDamageDealt);
             
             if (asteroid.type == "Colossus") {
-              asteroid.hp--;
+              asteroid.hp -= bulletDamageDealt;
             } else {
-              asteroid.hp -= bulletDamage;
+              asteroid.hp -= bulletDamageDealt;
             }
             
             if (asteroid.hp <= 0) {
@@ -975,12 +1000,16 @@ const update = (deltaTime) => {
               playExplosionSound();
             }
             bullet.remove = true;
-            playBulletHitSound();
+            if (isCrit) {
+              playCriticalHitSound();
+            } else {
+              playBulletHitSound();
+            };
           }
-        }
 
-        if (bosses.bossTypes.includes(asteroid.type)) {
-          bosses.updateBossHealthBar(asteroid.hp);
+          if (bosses.bossTypes.includes(asteroid.type)) {
+            bosses.updateBossHealthBar(asteroid.hp);
+          }
         }
       }
     } else {
@@ -1585,6 +1614,26 @@ const showFlash = (a, b, collisionPoint, normal, overlap) => {
     };
     renderer.addEntity(renderer.FLASH, flash);
     setTimeout(() => renderer.removeEntity(renderer.FLASH, flash.id), 100);
+  }
+};
+
+const showCriticalHit = (a, b, collisionPoint, normal, overlap, color="red") => {
+  if (drawCollisions) {
+    renderer.addEntity(renderer.COLLISION, {
+      a,
+      b,
+      collisionPoint,
+      normal,
+      lifetime: 100,
+    });
+  } else {
+    const crit = {
+      position: collisionPoint,
+      rotation: Math.random() * Math.PI * 2,
+      color: color,
+    };
+    renderer.addEntity(renderer.CRITICAL_HIT, crit);
+    setTimeout(() => renderer.removeEntity(renderer.CRITICAL_HIT, crit.id), 100);
   }
 };
 
