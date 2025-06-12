@@ -53,7 +53,6 @@ export const calculateTotalMomentum = (asteroids) => {
 
   if (isNaN(totalMomentum.x) || isNaN(totalMomentum.y)) {
     console.warn("Total momentum is NaN", totalMomentum);
-    debugger;
   }
 
   return Math.sqrt(totalMomentum.x ** 2 + totalMomentum.y ** 2);
@@ -89,7 +88,6 @@ export const velocityVerlet = (entity, dt) => {
 
   if (isNaN(entity.position.x) || isNaN(entity.position.y)) {
     console.warn("Entity position is NaN", entity);
-    debugger;
   }
 };
 
@@ -287,17 +285,14 @@ const isDisc = (entity) => entity.collider === DISC;
 const validateCollision = (collisionPoint, normal, overlap) => {
   if (isNaN(collisionPoint.x) || isNaN(collisionPoint.y)) {
     console.warn("Collision point is NaN", a, b, collisionPoint);
-    debugger;
   }
 
   if (isNaN(normal.x) || isNaN(normal.y)) {
     console.warn("Collision normal is NaN", a, b, normal);
-    debugger;
   }
 
   if (isNaN(overlap)) {
     console.warn("Collision overlap is NaN", a, b, overlap);
-    debugger;
   }
 };
 
@@ -396,12 +391,10 @@ export const checkAndResolveCollision = (a, b, onCollision) => {
 
   if (isNaN(a.velocity.x) || isNaN(a.velocity.y) || isNaN(b.velocity.x) || isNaN(b.velocity.y)) {
     console.warn("Entity velocity is NaN after collision resolution", a, b);
-    debugger;
   }
 
   if (isNaN(a.angularVelocity) || isNaN(b.angularVelocity)) {
     console.warn("Entity angular velocity is NaN after collision resolution", a, b);
-    debugger;
   }
 
   const collisionA = {
@@ -442,7 +435,6 @@ export const checkAndResolveCollision = (a, b, onCollision) => {
 
   if (isNaN(a.position.x) || isNaN(a.position.y) || isNaN(b.position.x) || isNaN(b.position.y)) {
     console.warn("Entity position is NaN after collision resolution", a, b);
-    debugger;
   }
 
   return true;

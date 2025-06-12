@@ -52,18 +52,18 @@ export const multiplyStat = (key, multi) => {
     modifiers[key] *= multi;
 }
 
+export const enableModifier = (key) => {
+    modifiers.changes = true;
+    modifiers[key] = true;
+}
+
 export const boni = createBoni(addToStat, multiplyStat);
-export const upgrades = createUpgrades(addToStat, multiplyStat);
+export const upgrades = createUpgrades(addToStat, multiplyStat, enableModifier);
 export const degrades = createDegrades(addToStat, multiplyStat);
 
 const updateCriticalStats = () => {
     modifiers.critical_hit_chance = baseCriticalHitChance * modifiers.critical_hit_chance_m + modifiers.critical_hit_chance_a;
     modifiers.critical_hit_damage = baseCriticalHitDamage * modifiers.critical_hit_damage_m + modifiers.critical_hit_damage_a;
-}
-
-export const enableModifier = (key) => {
-    modifiers.changes = true;
-    modifiers[key] = true;
 }
 
 export const handleObtainAbility = (onselect, reset) => {

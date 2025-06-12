@@ -1,18 +1,17 @@
 import { randomIndexWithProbability } from "../util/random";
 
-const canvas = document.getElementsByTagName("canvas")[0];
 const bossHealthSectionView = document.getElementById("boss-health-overlay");
 const bossHealthBarView = document.getElementById("boss-health-bar");
 const bossNameView = document.getElementById("boss-name");
 
 const bosses = {
     "Colossus": {
-        position: {x: -1500, y: canvas.height / 2},
+        position: {x: -1500, y: 500},
         rotation: Math.random() * 360,
         acceleration: {x: 0.001, y: 0},
         velocity: {x: 0.01, y: 0},
         angularVelocity: 0.00001,
-        radius: canvas.height / 1.5,
+        radius: 1000,
         type: "Colossus",
     }
 }

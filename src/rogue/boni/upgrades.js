@@ -1,4 +1,4 @@
-export const createUpgrades = (addToStat, multiplyStat) => {
+export const createUpgrades = (addToStat, multiplyStat, enableModifier) => {
     return [
         {
             "title": "Bigger Bullets!",

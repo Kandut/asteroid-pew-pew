@@ -863,7 +863,6 @@ const update = (deltaTime) => {
 
       if (isNaN(asteroid.velocity.x) || isNaN(asteroid.velocity.y)) {
         console.warn("Homing asteroid velocity is NaN");
-        debugger;
       }
     }
 
