@@ -36,6 +36,24 @@ export const createUpgrades = (addToStat, multiplyStat) => {
                 enableModifier("no_more_bullets");
                 addToStat("rocket_piercing_a", 3);
             }
-        }
+        },
+        {
+            "title": "Targeting Rockets",
+            "description": "Rockets will now prioritize armored and gold asteroids",
+            "active": false,
+            "callback": () => {
+                enableModifier("rocket_aim_armored");
+            }
+        },
     ]
 }
+
+/*
+{
+    "title": "",
+    "description": "",
+    "active": false,
+    "callback": () => {
+    }
+},
+*/

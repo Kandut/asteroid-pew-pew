@@ -606,6 +606,10 @@ const processEvents = () => {
 
   // rockets
   if (shootingRockets && now - lastRocketTime >= rocketCooldown && spaceship) {
+    const priorityTargets = asteroids.filter((value) => {
+      return !value.frozen && ["armored", "golden"].includes(value.type);
+    });
+
     for (let i = 0; i < modifiers.rocket_multiplier; i++) {
       const targets = [
         {
@@ -621,10 +625,11 @@ const processEvents = () => {
           },
         },
       ];
+
       for (let i = 0; i < Math.min(rocketPiercing, asteroids.length); i++) {
         let asteroid;
         do {
-          asteroid = asteroids[Math.floor(Math.random() * asteroids.length)];
+          asteroid = (modifiers.rocket_aim_armored &&  priorityTargets.length != 0 ? priorityTargets.pop() : asteroids[Math.floor(Math.random() * asteroids.length)]);
         } while (targets.includes(asteroid) || bosses.bossTypes.includes(asteroid.type));
         asteroid.frozen = true;
         asteroid.velocity.x = 0;

@@ -245,6 +245,7 @@ export const reset = () => {
         permanent_fuel_regeneration: false,
         rocket_multiplier: 1,
         no_more_bullets: false,
+        rocket_aim_armored: false,
     }
 
     upgrades.map((upgrade) => {

@@ -39,67 +39,113 @@ export const createBoni = (addToStat, multiplyStat) => {
         {
             "title": "Reload Bullets Faster",
             "description": "Increases your bullet fire rate by <span class='<class>'><level>%</span>",
-            "levels": [10, 15, 20, 30, 50, 100, 200, 400], // 8 levels (printed numbers)
+            "levels": [10, 15, 20, 30, 50, 100, 200, 400],
             "callback": (level) => {
-                const levels = [0.10, 0.15, 0.20, 0.30, 0.50, 1, 2, 4]; // 8 levels (added amounts)
+                const levels = [0.10, 0.15, 0.20, 0.30, 0.50, 1, 2, 4];
                 addToStat("bullet_attack_speed_m", levels[level]);
             }
         },
         {
             "title": "Reload Rockets Faster",
             "description": "Increases your rocket fire rate by <span class='<class>'><level>%</span>",
-            "levels": [10, 15, 20, 30, 50, 100, 200, 400], // 8 levels (printed numbers)
+            "levels": [10, 15, 20, 30, 50, 100, 200, 400],
             "callback": (level) => {
-                const levels = [0.10, 0.15, 0.20, 0.30, 0.50, 1, 2, 4]; // 8 levels (added amounts)
+                const levels = [0.10, 0.15, 0.20, 0.30, 0.50, 1, 2, 4];
                 addToStat("bullet_attack_speed_m", levels[level]);
             }
         },
         {
             "title": "More Powerups",
             "description": "Decreases the powerup spawn cooldown by <span class='<class>'><level>%</span>",
-            "levels": [1, 3, 5, 8, 10, 15, 20, 25], // 8 levels (printed numbers)
+            "levels": [1, 3, 5, 8, 10, 15, 20, 25],
             "callback": (level) => {
-                const levels = [0.01, 0.03, 0.05, 0.08, 0.10, 0.15, 0.20, 0.25]; // 8 levels (added amounts)
+                const levels = [0.01, 0.03, 0.05, 0.08, 0.10, 0.15, 0.20, 0.25]; 
                 addToStat("powerup_cooldown_m", levels[level]);
             }
         },
         {
             "title": "Bigger Tank",
             "description": "Increases the size of the fuel tank by <span class='<class>'><level>%</span>",
-            "levels": [5, 10, 15, 20, 30, 50, 100, 200], // 8 levels (printed numbers)
+            "levels": [5, 10, 15, 20, 30, 50, 100, 200],
             "callback": (level) => {
-                const levels = [0.05, 0.10, 0.15, 0.2, 0.3, 0.5, 1, 2]; // 8 levels (added amounts)
+                const levels = [0.05, 0.10, 0.15, 0.2, 0.3, 0.5, 1, 2];
                 addToStat("max_fuel_m", levels[level]);
             }
         },
         {
             "title": "Bigger Tank",
             "description": "Increases the size of the fuel tank by <span class='<class>'><level> L</span>",
-            "levels": [50, 100, 150, 200, 300, 400, 500, 1000], // 8 levels (printed numbers)
+            "levels": [50, 100, 150, 200, 300, 400, 500, 1000],
             "callback": (level) => {
-                const levels = [50, 100, 150, 200, 300, 400, 500, 1000]; // 8 levels (added amounts)
+                const levels = [50, 100, 150, 200, 300, 400, 500, 1000]; 
                 addToStat("max_fuel_a", levels[level]);
             }
         },
         {
             "title": "Bigger Pumps",
             "description": "Increases your fuel regeneration by <span class='<class>'><level> L / Frame</span>",
-            "levels": [0.01, 0.03, 0.05, 0.08, 0.1, 0.15, 0.20, 0.25], // 8 levels (printed numbers)
+            "levels": [0.01, 0.03, 0.05, 0.08, 0.1, 0.15, 0.20, 0.25], 
             "callback": (level) => {
-                const levels = [0.01, 0.03, 0.05, 0.08, 0.1, 0.15, 0.20, 0.25]; // 8 levels (added amounts)
+                const levels = [0.01, 0.03, 0.05, 0.08, 0.1, 0.15, 0.20, 0.25]; 
                 addToStat("fuel_regen_a", levels[level]);
             }
-        }
-        ,
+        },
         {
             "title": "Bigger Jets",
             "description": "Increases your fuel consumption and acceleration by <span class='<class>'><level>%</span>",
-            "levels": [5, 10, 15, 20, 25, 30, 35, 40], // 8 levels (printed numbers)
+            "levels": [5, 10, 15, 20, 25, 30, 35, 40], 
             "callback": (level) => {
-                const levels = [0.05, 0.10, 0.15, 0.20, 0.25, 0.30, 0.35, 0.40]; // 8 levels (added amounts)
+                const levels = [0.05, 0.10, 0.15, 0.20, 0.25, 0.30, 0.35, 0.40]; 
                 addToStat("spaceship_acceleration_m", levels[level]);
                 addToStat("fuel_consumption_m", levels[level]);
             }
-        }
+        },
+        {
+            "title": "Crit Chance",
+            "description": "Increases your critical hit chance by <span class='<class>'><level>%</span> (multiplicative)",
+            "levels": [5, 10, 15, 20, 30, 40, 50, 100],
+            "callback": (level) => {
+                const levels = [0.05, 0.10, 0.15, 0.20, 0.30, 0.40, 0.50, 1];
+                addToStat("critical_hit_chance_m", levels[level]);
+            }
+        },
+        {
+            "title": "Crit Chance",
+            "description": "Increases your critical hit chance by <span class='<class>'><level>%</span> (adaptive)",
+            "levels": [5, 10, 15, 20, 25, 30, 40, 50],
+            "callback": (level) => {
+                const levels = [0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.4, 0.5];
+                addToStat("critical_hit_chance_a", levels[level]);
+            }
+        },
+        {
+            "title": "Crit Damage",
+            "description": "Increases your critical hit damage by <span class='<class>'><level>%</span> (multiplicative)",
+            "levels": [5, 10, 15, 20, 30, 40, 50, 100],
+            "callback": (level) => {
+                const levels = [0.05, 0.10, 0.15, 0.20, 0.30, 0.40, 0.50, 1];
+                addToStat("critical_hit_damage_m", levels[level]);
+            }
+        },
+        {
+            "title": "Crit Damage",
+            "description": "Increases your critical hit damage by <span class='<class>'><level>%</span> (adaptive)",
+            "levels": [5, 10, 15, 20, 25, 30, 40, 50],
+            "callback": (level) => {
+                const levels = [0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.4, 0.5];
+                addToStat("critical_hit_damage_a", levels[level]);
+            }
+        },
     ];
 }
+
+/*
+{
+    "title": "",
+    "description": "<span class='<class>'><level>%</span>",
+    "levels": [], // 8 levels (printed numbers)
+    "callback": (level) => {
+        const levels = []; // 8 levels (added amounts)
+    }
+},
+*/
