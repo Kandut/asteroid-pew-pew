@@ -63,10 +63,10 @@ import * as ui from "./util/ui.js";
 import * as shop from "./rogue/shop.js";
 import {modifiers, handleObtainAbility, reset as resetRogue, calcCrit, hitIsCrit, colors, baseCriticalHitChance, baseCriticalHitDamage} from "./rogue/rogue.js";
 import * as bosses from "./rogue/bosses.js";
-import {currentFuel, updateFuel, reset as resetFuel, fuelRegen, baseFuelPowerupYield, updateStats as updateFuelStats, baseMaxFuel, baseFuelRegen, hideFuelTank, showFuelTank} from "./rogue/fuel.js";
+import {currentFuel, updateFuel, reset as resetFuel, fuelRegen, baseFuelPowerupYield, updateStats as updateFuelStats, baseMaxFuel, baseFuelRegen, hideFuelTank, showFuelTank, fuelConsumption} from "./rogue/fuel.js";
 
 import { createFragementTexture, prepareVornoi } from "./features/VoronoiFracture.js";
-import { hideStatsMenue, showStatsMenue, updateStatView } from "./rogue/statsMenue.js";
+import { hideStatsMenue, showStatsMenue, updateStatsView } from "./rogue/statsMenue.js";
 
 // DOM elements
 let canvas = document.getElementsByTagName("canvas")[0];
@@ -247,18 +247,22 @@ const toggleMenue = (menueType) => {
         shop.hideShop();
         ui.hidePauseMenu();
 
-        updateStatView(
+        const baseValues = {
+          "bullet-damage": baseBulletDamage, 
+          "bullet-attack-speed": baseBulletCooldown, 
+          "rocket-piercing": baseRocketPiercing, 
+          "rocket-attack-speed": baseRocketCooldown, 
+          "experience-gain": baseExperienceGain, 
+          "max-fuel": baseMaxFuel, 
+          "fuel-regen": baseFuelRegen,
+          "critical-hit-chance": baseCriticalHitChance,
+          "critical-hit-damage": baseCriticalHitDamage,
+        }
+
+        updateStatsView(
           modifiers, 
           collectedPowerups, 
-          baseBulletDamage, 
-          baseBulletCooldown, 
-          baseRocketPiercing, 
-          baseRocketCooldown, 
-          baseExperienceGain, 
-          baseMaxFuel, 
-          baseFuelRegen, 
-          baseCriticalHitChance, 
-          baseCriticalHitDamage
+          baseValues
         );
         showStatsMenue();
         break;
@@ -755,14 +759,14 @@ const processEvents = () => {
       spaceship.force.y = spaceship.force.y * modifiers.spaceship_acceleration_m;
 
       if (currentFuel > 0) {
-        updateFuel(currentFuel - 1);
-        if (modifiers.permanent_fuel_regeneration) {
-          updateFuel(currentFuel + fuelRegen);
-        }
+        updateFuel(currentFuel - fuelConsumption);
       } else {
-        updateFuel(currentFuel + fuelRegen);
         spaceship.force.x = 0;
         spaceship.force.y = 0;
+      }
+
+      if (modifiers.permanent_fuel_regeneration) {
+        updateFuel(currentFuel + fuelRegen);
       }
     } else {
       updateFuel(currentFuel + fuelRegen);

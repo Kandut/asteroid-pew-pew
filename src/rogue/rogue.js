@@ -1,8 +1,11 @@
 import { gameState } from "../util/gamestatistics";
 import { randomIndexWithProbability } from "../util/random";
-import { playClickSound, playFailedSound, playSpaceshipCollisionSound } from "../util/sound";
-import { updatePlintin } from "../util/ui";
+import { playClickSound, playFailedSound } from "../util/sound";
 import { currentPlintin, handleGetPlintin } from "./shop";
+
+import { createBoni } from "./boni/boni";
+import { createUpgrades } from "./boni/upgrades";
+import { createDegrades } from "./boni/degrates";
 
 import plintinUrl from "/img/rogue/plintin.png?url";
 
@@ -35,85 +38,6 @@ const rarities =        ["common",      "uncommon",     "rare",         "epic", 
 export const colors =   ["0,128,0",     "35,228,224",   "35,70,228",    "163,35,228",   "210,23,26",    "255,250,28",   "255,208,252",  "105,9,18"];             
 const rarityChances =   [0.40,          0.30,           0.15,           0.10,           0.05,           0.01,           0.005,          0.001];
 
-export const allBoni = [
-    {
-        "title": "More Bullet Damage!",
-        "description": "Increases your bullet damage by <span class='<class>'><level>%</span>",
-        "levels": [10,15,20,30,50,100,200,400],
-        "callback": (level) => {
-            const levels = [0.10, 0.15, 0.20, 0.30, 0.50, 1, 2, 4];
-            addToStat("bullet_damage_m", levels[level]);
-        }
-    },
-    {
-        "title": "More Rocket Piercing!",
-        "description": "Increases your rocket piercing by <span class='<class>'><level></span>",
-        "levels": [1, 1, 2, 2, 3, 5, 7, 10],
-        "callback": (level) => {
-            const levels =  [1, 1, 2, 2, 3, 5, 7, 10];
-            addToStat("rocket_piercing_a", levels[level]);
-        }
-    },
-    {
-        "title": "More Experience!",
-        "description": "Increases the experience per asteroid by <span class='<class>'><level></span>",
-        "levels": [1, 1, 1, 2, 3, 5, 7, 10],
-        "callback": (level) => {
-            const levels = [1, 1, 1, 2, 3, 5, 7, 10];
-            addToStat("experience_gain_a", levels[level]);
-        }
-    },
-    {
-        "title": "More Experience!",
-        "description": "Increases your experience by <span class='<class>'><level>%</span>",
-        "levels": [10, 15, 20, 30, 50, 100, 200, 400],
-        "callback": (level) => {
-            const levels = [0.10, 0.15, 0.20, 0.30, 0.50, 1, 2, 4];
-            addToStat("experience_gain_m", levels[level]);
-        }
-    }
-];
-
-export const singleTimeUpgrades = [
-    {
-        "title": "Bigger Bullets!",
-        "description": "Increases bullet mass by <span class='<class>'}>200%</span> but reduces your damage by <span class='<class>'>50%</span>",
-        "active": false,
-        "callback": () => {
-            multiplyStat("bullet_mass_m", 2);
-            multiplyStat("bullet_damage_m", 0.5);
-        }
-    },
-    {
-        "title": "No more control, BUT DAMAGE!",
-        "description": "Shoot in random directions but deal <span class='<class>'>+1000%</span> damage",
-        "active": false,
-        "callback": () => {
-            enableModifier("shoot_random_direction");
-            multiplyStat("bullet_damage_m", 10);
-        }
-    },
-    {
-        "title": "Permanent Fuel Regeneration",
-        "description": "Fuel now regenerates while flying, but the ship flies at half speed",
-        "active": false,
-        "callback": () => {
-            enableModifier("permanent_fuel_regeneration");
-            multiplyStat("spaceship_acceleration_m", 0.5);
-        }
-    },
-    {
-        "title": "Double rockets",
-        "description": "Fire two rockets instead of one, gain +3 piercing and disable bullets",
-        "active": false,
-        "callback": () => {
-            multiplyStat("rocket_multiplier", 2);
-            enableModifier("no_more_bullets");
-            addToStat("rocket_piercing_a", 3);
-        }
-    }
-]
-
 export const addToStat = (key, addition) => {
     modifiers.changes = true;
     modifiers[key] += addition;
@@ -123,14 +47,18 @@ export const addToStat = (key, addition) => {
     }
 }
 
-const updateCriticalStats = () => {
-    modifiers.critical_hit_chance = baseCriticalHitChance * modifiers.critical_hit_chance_m + modifiers.critical_hit_chance_a;
-    modifiers.critical_hit_damage = baseCriticalHitDamage * modifiers.critical_hit_damage_m + modifiers.critical_hit_damage_a;
-}
-
 export const multiplyStat = (key, multi) => {
     modifiers.changes = true;
     modifiers[key] *= multi;
+}
+
+export const boni = createBoni(addToStat, multiplyStat);
+export const upgrades = createUpgrades(addToStat, multiplyStat);
+export const degrades = createDegrades(addToStat, multiplyStat);
+
+const updateCriticalStats = () => {
+    modifiers.critical_hit_chance = baseCriticalHitChance * modifiers.critical_hit_chance_m + modifiers.critical_hit_chance_a;
+    modifiers.critical_hit_damage = baseCriticalHitDamage * modifiers.critical_hit_damage_m + modifiers.critical_hit_damage_a;
 }
 
 export const enableModifier = (key) => {
@@ -145,38 +73,38 @@ export const handleObtainAbility = (onselect, reset) => {
 
     rerollAbilitiesPriceView.innerText = rerollPrice;
 
-    const availableBoni = singleTimeUpgrades.filter((it) => !it.active);
+    const availableBoni = upgrades.filter((it) => !it.active);
 
-    const pool = [...allBoni, ...availableBoni];
+    const pool = [...boni, ...availableBoni];
     const probs = [];
 
-    allBoni.forEach(() => {
-        probs.push(0.7 / allBoni.length);
+    boni.forEach(() => {
+        probs.push(0.7 / boni.length);
     });
 
     availableBoni.forEach(() => {
         probs.push(0.3 / availableBoni.length);
     });
 
-    let upgrades = [];
+    let abilities = [];
 
-    while (upgrades.length < 3) {
+    while (abilities.length < 3) {
         const upgradeIndex = randomIndexWithProbability(probs);
 
-        if (!upgrades.includes(upgradeIndex)) {
-            upgrades.push(upgradeIndex);
+        if (!abilities.includes(upgradeIndex)) {
+            abilities.push(upgradeIndex);
         }
     }
 
-    upgrades = upgrades.map((it) => {return pool[it]});
+    abilities = abilities.map((it) => {return pool[it]});
 
     levelupMenuView.style.display = "grid";
 
     rerollAbilitiesButton.onclick = () => {handleReroll(onselect)};
 
-    showUpgrade(levelupTitle1, levelupRarity1, levelupDescription1, level1View, upgrades[0], onselect);
-    showUpgrade(levelupTitle2, levelupRarity2, levelupDescription2, level2View, upgrades[1], onselect);
-    showUpgrade(levelupTitle3, levelupRarity3, levelupDescription3, level3View, upgrades[2], onselect);
+    showUpgrade(levelupTitle1, levelupRarity1, levelupDescription1, level1View, abilities[0], onselect);
+    showUpgrade(levelupTitle2, levelupRarity2, levelupDescription2, level2View, abilities[1], onselect);
+    showUpgrade(levelupTitle3, levelupRarity3, levelupDescription3, level3View, abilities[2], onselect);
 }
 
 function handleReroll(onselect) {
@@ -282,6 +210,9 @@ export const reset = () => {
 
         fuel_regen_m: 1,
         fuel_regen_a: 0,
+
+        fuel_consumption_m: 1,
+        fuel_consumption_a: 0,
     
         asteroid_radius_m: 1,
         asteroid_radius_a: 0,
@@ -316,7 +247,7 @@ export const reset = () => {
         no_more_bullets: false,
     }
 
-    singleTimeUpgrades.map((upgrade) => {
+    upgrades.map((upgrade) => {
         upgrade.active = false;
         return upgrade;
     });

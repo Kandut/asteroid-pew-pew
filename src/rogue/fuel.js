@@ -11,13 +11,16 @@ const maxMarginLeft = 5;
 export const baseMaxFuel = 1000;
 export const baseFuelRegen = 0.25;
 export const baseFuelPowerupYield = 1000;
+export const baseFuelConsumption = 1;
 export let maxFuel = baseMaxFuel;
 export let currentFuel = baseMaxFuel;
 export let fuelRegen = baseFuelRegen;
+export let fuelConsumption = baseFuelConsumption;
 
 export const updateStats = () => {
     maxFuel = baseMaxFuel * modifiers.max_fuel_m + modifiers.max_fuel_a;
     fuelRegen = baseFuelRegen * modifiers.fuel_regen_m + modifiers.fuel_regen_a;
+    fuelConsumption = baseFuelConsumption * modifiers.fuel_consumption_m + modifiers.fuel_consumption_a;
 }
 
 export const updateFuel = (fuel) => {
