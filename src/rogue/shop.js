@@ -12,7 +12,6 @@ const shopMenuView = document.getElementById("shop");
 const shopCoinsView = document.getElementById("shop-coins");
 
 const bulletAttackSpeedButton = document.getElementById("shop-bullet-attack-speed");
-const bulletCompressionButton = document.getElementById("shop-bullet-attack-compression");
 const rocketAttackSpeedButton = document.getElementById("shop-rocket-attack-speed");
 const rocketPiercingButton = document.getElementById("shop-rocket-piercing");
 const experienceGainButton = document.getElementById("shop-experience-gain");
@@ -79,13 +78,6 @@ export const resetShop = () => {
           "price": 100,
           "currency": "coins",
           "button": bulletAttackSpeedButton
-        },
-        "bullet_compression": { //reduced attack speed, but increases bullet damage accordingly (helps to not lag the game)
-          "level": 0,
-          "scaling": 1.2,
-          "price": 100,
-          "currency": "coins",
-          "button": bulletCompressionButton
         },
         "rocket_attack_speed": { // increases the fire rate of rocket
           "level": 0,
@@ -180,10 +172,6 @@ function buy(key) {
                 addToStat(key + "_m", 0.05);
                 break;
 
-            case "bullet_compression": 
-                addToStat(key, 1);
-                break;
-
             case "rocket_attack_speed": 
                 addToStat(key + "_m", 0.05);
                 break;
@@ -232,11 +220,6 @@ export const initialiseShop = () => {
     bulletAttackSpeedButton.onclick = () => {
         let price = buy("bullet_attack_speed");
         bulletAttackSpeedButton.innerHTML = formatNumberName(price) + coinIconString;
-    };
-    bulletCompressionButton.innerHTML = shop.bullet_compression.price + coinIconString;
-    bulletCompressionButton.onclick = () => {
-        let price = buy("bullet_compression");
-        bulletCompressionButton.innerHTML = formatNumberName(price) + coinIconString;
     };
     rocketAttackSpeedButton.innerHTML = shop.rocket_attack_speed.price + coinIconString;
     rocketAttackSpeedButton.onclick = () => {

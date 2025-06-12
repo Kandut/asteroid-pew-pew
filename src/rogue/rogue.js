@@ -107,7 +107,7 @@ export const singleTimeUpgrades = [
         "description": "Fire two rockets instead of one, gain +3 piercing and disable bullets",
         "active": false,
         "callback": () => {
-            addToStat("rocket_multiplier", 1);
+            multiplyStat("rocket_multiplier", 2);
             enableModifier("no_more_bullets");
             addToStat("rocket_piercing_a", 3);
         }
